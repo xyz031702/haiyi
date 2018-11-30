@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from haiyi.views import current_datetime,chat_receiver
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('chat/', chat_receiver),
+    path('test/', current_datetime),
 ]
