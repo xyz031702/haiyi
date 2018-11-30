@@ -1,0 +1,86 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
+    container_name: elasticsearch_haiyi
+    hostname: elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+    restart: always
+#    volumes:
+#      - ~/data/elasticsearch/data:/var/data/elasticsearch
+#      - ~/data/elasticsearch/log:/var/log/elasticsearch
+
+  django: &django
+    container_name: django_haiyi
+    hostname: django_haiyi
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    volumes:
+      - .:/app
+    env_file: .env
+    command: /gunicorn.sh
+    ports:
+    - "8000:8000"
+#    networks:
+#      - nginx_network
+
+  nginx-proxy:
+    image: neilpang/nginx-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+    volumes:
+      - ./compose/config/nginx/conf.d:/etc/nginx/conf.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    #command: /ubuntu-tools.sh
+#    network_mode: "host"
+    #  - nginx_network
+
+
+#  web: &web
+#    build:
+#      context: .
+#      dockerfile: ./compose/web/Dockerfile
+#    volumes:
+#      - .:/app
+#      - /data/code_uploads:/data/code_uploads
+#    env_file:
+#      - .env
+#    environment:
+#      - USE_LINUX=False
+#      - FLASK_APP=autoapp.py
+#      - FLASK_DEBUG=True
+#      - FLASK_ENV=production
+#    ports:
+#      - "5050:5050"
+#    command: /start.sh
+#    restart: always
+#
+#  meta-engine:
+#    <<: *web
+#    ports: []
+#    restart: always
+#    command: /start_meta_engine.sh
+#
+#  code-engine:
+#    <<: *web
+#    ports: []
+#    restart: always
+#    command: /start_code_engine.sh
+#
+#  binary-engine:
+#    <<: *web
+#    ports: []
+#    restart: always
+#    command: /start_binary_engine.sh
+#
+#networks:  # <-- and here
+#  nginx_network:
+#    driver: bridge

@@ -1,0 +1,22 @@
+# Pro-tip: Try not to put anything here. Avoid dependencies in
+#	production that aren't in development.
+-r base.txt
+
+
+
+# WSGI Handler
+# ------------------------------------------------
+gunicorn==19.9.0
+
+# Static and Media Storage
+# ------------------------------------------------
+django-storages==1.7.1
+Collectfast==0.6.2
+
+# Raven is the Sentry client
+# ------------------------------------------------
+raven==6.9.0
+
+# Fake Django admin login
+# ------------------------------------------------
+django-admin-honeypot==1.1.0
