@@ -125,15 +125,14 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'console': {
-            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-           # 'filename': './log/haiyi_log.log',
+            #'filename': './log/haiyi_log.log',
         },
     },
     'loggers': {
-        'django': {
+        'haiyi': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },

@@ -14,6 +14,6 @@ def current_datetime(request):
 
 @csrf_exempt
 def chat_receiver(request):
-    logger.info('from wechat:', request.POST)
+    logger.info('from wechat=%s', request.POST)
     html = "<html><body>chat: %s.</body></html>" % request.POST
     return HttpResponse(html)
