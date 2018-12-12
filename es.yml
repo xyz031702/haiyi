@@ -9,7 +9,8 @@ services:
       - "9200:9200"
     environment:
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: always
 #    volumes:
 #      - ~/data/elasticsearch/data:/var/data/elasticsearch
