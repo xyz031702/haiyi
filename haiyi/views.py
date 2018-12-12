@@ -18,6 +18,7 @@ def current_datetime(request):
 
 @csrf_exempt
 def chat_receiver(request):
+    logger.info('received request from wechat')
     if request.method=='GET':
         logger.info('from wechat=%s', request.GET)
         signature = request.GET.get('signature')
@@ -36,7 +37,8 @@ def chat_receiver(request):
             logger.info("hashcode not matched, hash=%s, signature=%s", hashcode, signature)
             return HttpResponse("no match")
     else:
-        othercontent = autoreply(request)
+        othercontent = autoreply(request.body)
+        logger.info('reply=%s', othercontent)
         return HttpResponse(othercontent)
 
 

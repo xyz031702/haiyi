@@ -1,3 +1,6 @@
 # Local development dependencies go here
 django
 gunicorn==19.9.0
+xlrd
+jieba
+elasticsearch

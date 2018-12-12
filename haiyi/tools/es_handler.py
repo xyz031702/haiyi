@@ -30,7 +30,7 @@ class ES_Conn(object):
         else:
             self.es = Elasticsearch(
                 hosts,
-                scheme="https",
+                scheme="http",
                 port=port
             )
         self.es_params = kwargs

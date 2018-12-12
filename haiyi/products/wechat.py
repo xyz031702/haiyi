@@ -1,11 +1,14 @@
 import xml.etree.ElementTree as ET
 import time
 import logging
+from haiyi.products.parser import search
+
 logger = logging.getLogger(__name__)
 
 
 def autoreply(data):
     try:
+        logger.info('data from wechat=%s', data)
         #        webData = request.body
         xmlData = ET.fromstring(data)
 
@@ -17,8 +20,7 @@ def autoreply(data):
 
         if msg_type == 'text':
             content = xmlData.find('Content').text
-            logger.info('autoreply|content received=%s', content)
-            reply = "机器人：我是个机器人，你好"
+            reply = search_item(content)
         elif msg_type == 'image':
             reply = "图片已收到,谢谢"
         elif msg_type == 'voice':
@@ -33,7 +35,7 @@ def autoreply(data):
             reply = "链接已收到,谢谢"
         else:
             reply = "谢谢发送的内容"
-        replyMsg = TextMsg(toUser, fromUser, reply)
+        replyMsg = TextMsg(toUserName=toUser, fromUserName=fromUser, content=reply)
         return replyMsg.send()
     except Exception as e:
         return e
@@ -54,17 +56,27 @@ class TextMsg(Msg):
             ToUserName=toUserName,
             FromUserName=fromUserName,
             CreateTime=int(time.time()),
-            Content=content
         )
+        self.Content = content
 
     def send(self):
-        XmlForm = """
+        xmlForm = """
         <xml>
-        <ToUserName><![CDATA[{ToUserName}]]></ToUserName>
-        <FromUserName><![CDATA[{FromUserName}]]></FromUserName>
+        <ToUserName><![CDATA[{FromUserName}]]></ToUserName>
+        <FromUserName><![CDATA[{ToUserName}]]></FromUserName>
         <CreateTime>{CreateTime}</CreateTime>
         <MsgType><![CDATA[text]]></MsgType>
         <Content><![CDATA[{Content}]]></Content>
         </xml>
         """
-        return XmlForm.format(**self.__dict__)
+        xml_reply = xmlForm.format(**self.__dict__)
+        logger.info('msg=%s, reply=%s', self.__dict__, xml_reply)
+        return xml_reply
+
+
+def search_item(message):
+    products= search(message)
+    str=''
+    for p in products:
+        str='%s&#x000A;%s' % (str, p)
+    return str
