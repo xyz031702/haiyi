@@ -21,8 +21,8 @@ RUN apk update \
 ## Rebuild the font cache.
 #RUN fc-cache -fv
 
-RUN addgroup -S django \
-    && adduser -S -G django django
+#RUN addgroup -S django \
+#    && adduser -S -G django django
 
 # Requirements have to be pulled and installed here, otherwise caching won't work
 COPY ./requirements /requirements
@@ -42,8 +42,8 @@ RUN chown django /entrypoint.sh
 
 WORKDIR /app
 #COPY . /app
-RUN chown -R django /app
-USER django
+#RUN chown -R django /app
+#USER django
 
 
 #ENTRYPOINT ["/entrypoint.sh"]
