@@ -4,10 +4,15 @@ import json
 import jieba
 from django.conf import settings
 import os
+import logging
 from xml.sax.saxutils import escape
 
-def read_xls(index):
-    xls_file = os.path.join(settings.BASE_DIR, settings.STATIC_URL, 'products11.23.xls')
+logger = logging.getLogger(__name__)
+
+
+def read_xls(index, xls_file):
+    # xls_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, 'products11.23.xls')
+    logging.info('read_xls|index=%s, xls_file=$s', index, xls_file)
     workbook = xlrd.open_workbook(xls_file, on_demand=True)
     worksheet = workbook.sheet_by_index(0)
     i = 2
@@ -38,18 +43,21 @@ def read_xls(index):
             cell = worksheet.cell(i, 0)
     except Exception as e:
         print(f'exception:{e}')
+    finally:
+        workbook.release_resources()
 
 
 es = ES_Conn()
 es.conn(hosts=['localhost', 'elasticsearch_haiyi'], port=9200, es_payload_limit=100)
 
 
-def index_docs():
+def index_docs(xls_file):
     index = 'haiyi_es'
     result = create_new_index(es.es, index)
     print(result)
-    succ, fail = bulk_index(es=es.es, index=index, generator=read_xls)
+    succ, fail = bulk_index(es=es.es, index=index, xls_file=xls_file, generator=read_xls)
     print(succ, fail)
+    return succ
 
 
 def search(message):
@@ -64,7 +72,7 @@ def search(message):
     docs = []
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
-        pname= escape(src['real_name'].strip())
+        pname = escape(src['real_name'].strip())
         str = f"<a href='www.baidu.com'>{pname}({src['model_id'].replace('.','-')})</a>\n" \
               f"库存: {src['quantity']}\n" \
               f"3万批价: {src['price_3w']}元\n" \

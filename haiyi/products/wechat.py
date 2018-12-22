@@ -2,6 +2,8 @@ import xml.etree.ElementTree as ET
 import time
 import logging
 from haiyi.products.parser import search
+from haiyi.models import HaiyiUser
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +84,11 @@ def handle_msg(to_user, from_user, message):
 
 
 def search_item(to_user, from_user, message):
+    members = HaiyiUser.objects.filter(open_id=from_user). \
+        filter(active=True). \
+        filter(end_date__gte=datetime.date.today())
+    if not members:
+        return '不是激活用户'
     products = search(message)
     str = ''
     i = 0

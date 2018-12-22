@@ -40,12 +40,12 @@ class ES_Conn(object):
 
 def bulk_optimized(func):
     # https://qbox.io/blog/maximize-guide-elasticsearch-indexing-performance-part-2
-    def func_wrapper(es: Elasticsearch, index, generator, **kwargs):
+    def func_wrapper(es: Elasticsearch, index, xls_file, generator, **kwargs):
         # es = kwargs['es']  # type:Elasticsearch
         # index = kwargs['index']
         payload = '{ "index": { "refresh_interval": "-1", "blocks": {"read_only_allow_delete": "false"}}, "translog.durability":"async"}'
         es.indices.put_settings(index=index, body=payload)
-        result = func(es, index, generator, **kwargs)
+        result = func(es, index, xls_file, generator, **kwargs)
         es.indices.refresh()
         return result
 
@@ -53,9 +53,9 @@ def bulk_optimized(func):
 
 
 @bulk_optimized
-def bulk_index(es: Elasticsearch, index, generator, **kwargs):
+def bulk_index(es: Elasticsearch, index, xls_file, generator, **kwargs):
     logger.info('bulk_index|index=%s', index)
-    success, fail = bulk(es, generator(index, **kwargs))
+    success, fail = bulk(es, generator(index, xls_file, **kwargs))
     return success, fail
 
 

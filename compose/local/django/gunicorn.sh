@@ -5,6 +5,7 @@ set -o pipefail
 set -o nounset
 
 
-#python /app/manage.py runserver --noinput
+python manage.py collectstatic
+python /app/manage.py migrate
 gunicorn haiyi.wsgi -w 1 -b 0.0.0.0:8000 --chdir=/app
 #gunicorn --chdir /haiyi --bind :5000 haiyi.wsgi:application
