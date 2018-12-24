@@ -121,7 +121,7 @@ STATIC_URL = '/static/'
 # ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-UPLOAD_FOLDER = 'upload/'
+UPLOAD_FOLDER = "upload/"
 
 LOGGING = {
     'version': 1,

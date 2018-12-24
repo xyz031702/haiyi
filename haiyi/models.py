@@ -12,9 +12,11 @@ class ProductsFile(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        xls_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, self.file.name)
+        super(ProductsFile, self).save(force_insert, force_update, using, update_fields)
+        xls_file = self.file.name
         self.products_count = index_docs(xls_file)
         super(ProductsFile, self).save(force_insert, force_update, using, update_fields)
+
 
 
 class HaiyiUser(models.Model):
@@ -30,15 +32,18 @@ class HaiyiUser(models.Model):
         models.Index(fields=['open_id', ]),
     ]
 
-#
-# class UsersFile(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     file = models.FileField(upload_to=settings.UPLOAD_FOLDER)
-#     pub_date = models.DateTimeField('date published', auto_now_add=True)
-#     users_count = models.IntegerField(default=0)
-#
-#     def save(self, force_insert=False, force_update=False, using=None,
-#              update_fields=None):
-#         users_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, self.file.name)
-#         for
-#         super(UsersFile, self).save(force_insert, force_update, using, update_fields)
+    def __str__(self):
+        return '%s(%s)' % (self.name, self.account_id)
+
+        #
+        # class UsersFile(models.Model):
+        #     id = models.AutoField(primary_key=True)
+        #     file = models.FileField(upload_to=settings.UPLOAD_FOLDER)
+        #     pub_date = models.DateTimeField('date published', auto_now_add=True)
+        #     users_count = models.IntegerField(default=0)
+        #
+        #     def save(self, force_insert=False, force_update=False, using=None,
+        #              update_fields=None):
+        #         users_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, self.file.name)
+        #         for
+        #         super(UsersFile, self).save(force_insert, force_update, using, update_fields)

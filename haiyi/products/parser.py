@@ -33,6 +33,8 @@ def read_xls(index, xls_file):
                     'price_1w': worksheet.cell(i, 4).value,
                     'price_3k': worksheet.cell(i, 5).value,
                     'price_retail': worksheet.cell(i, 6).value,
+                    'hot': worksheet.cell(i, 7).value,
+                    'difficulty': worksheet.cell(i, 8).value,
                 },
                 '_id': worksheet.cell(i, 0).value,
                 'doc_as_upsert': True,
@@ -78,7 +80,9 @@ def search(message):
               f"3万批价: {src['price_3w']}元\n" \
               f"1万批价：{src['price_1w']}元\n" \
               f"3千批价：{src['price_3k']}元\n" \
-              f"零售价格：{src['price_retail']}元\n"
+              f"零售价格：{src['price_retail']}元\n" \
+              f"热销程度：{src['hot']}元\n" \
+              f"进货难度：{src['difficulty']}元\n"
         docs.append(str)
     return docs
 
