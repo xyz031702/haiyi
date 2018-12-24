@@ -79,14 +79,14 @@ def search(message):
         pname = escape(src['real_name'].strip())
         str = f"<a href='www.baidu.com'>{pname}({src['model_id'].replace('.','-')})</a>\n" \
               f"库存: {src['quantity']}\n" \
-              f"实际成本: {src['real_cost']}\n" \
-              f"市场成本: {src['market_cost']}\n" \
+              f"实际成本: {src['real_cost']}元\n" \
+              f"市场成本: {src['market_cost']}元\n" \
               f"3万批价: {src['price_3w']}元\n" \
               f"1万批价：{src['price_1w']}元\n" \
               f"3千批价：{src['price_3k']}元\n" \
               f"零售价格：{src['price_retail']}元\n" \
-              f"热销程度：{src['hot']}元\n" \
-              f"进货难度：{src['difficulty']}元\n"
+              f"热销程度：{src['hot']}\n" \
+              f"进货难度：{src['difficulty']}\n"
         docs.append(str)
     return docs
 
