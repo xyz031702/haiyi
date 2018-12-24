@@ -45,7 +45,7 @@ def read_xls(index, xls_file):
             i += 1
             cell = worksheet.cell(i, 0)
     except Exception as e:
-        print(f'exception:{e}')
+        logger.error(f'exception:{e}')
     finally:
         workbook.release_resources()
 
@@ -59,7 +59,7 @@ def index_docs(xls_file):
     result = create_new_index(es.es, index)
     print(result)
     succ, fail = bulk_index(es=es.es, index=index, xls_file=xls_file, generator=read_xls)
-    print(succ, fail)
+    logger.info('indexing|succ=%s, fail=%s', succ, fail)
     return succ
 
 
@@ -76,16 +76,17 @@ def search(message):
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
         pname = escape(src['real_name'].strip())
-        str = f"<a href='www.baidu.com'>{pname}({src['model_id'].replace('.','-')})</a>\n" \
-              f"库存: {src['quantity']}\n" \
-              f"实际成本: {src['real_cost']}元\n" \
-              f"市场成本: {src['market_cost']}元\n" \
-              f"3万批价: {src['price_3w']}元\n" \
-              f"1万批价：{src['price_1w']}元\n" \
-              f"3千批价：{src['price_3k']}元\n" \
-              f"零售价格：{src['price_retail']}元\n" \
-              f"热销程度：{src['hot']}\n" \
-              f"采购难度：{src['difficulty']}\n"
+        quality = int(src['quantity']) if src['quantity'] else 0
+        str = f"<a href='www.baidu.com'>{pname}</a>\n" \
+              f"库存: {quality}\n" \
+              f"实价: {src['real_cost']}元\n" \
+              f"市价: {src['market_cost']}元\n" \
+              f"3w: {src['price_3w']}元\n" \
+              f"1w：{src['price_1w']}元\n" \
+              f"3k：{src['price_3k']}元\n" \
+              f"零售：{src['price_retail']}元\n" \
+              f"热销：{src['hot']}\n" \
+              f"采购：{src['difficulty']}"
         docs.append(str)
     return docs
 

@@ -90,13 +90,14 @@ def search_item(to_user, from_user, message):
     if not members:
         return '不是激活用户'
     products = search(message)
-    str = ''
+    content = ''
     i = 0
     for p in products:
         i += 1
-        str = '%s\n\n%d. %s' % (str, i, p)
-    str = str.strip()
-    return str
+        content = '%s\n\n%d. %s' % (content, i, p)
+    content = content.strip()
+    logger.info('content_len=%s', len(content))
+    return content
 
 
 def echo_openid(to_user, from_user, message):
