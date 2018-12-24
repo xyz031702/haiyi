@@ -21,23 +21,22 @@ def read_xls(index, xls_file):
         # yield temp_src
         while (cell):
             product_name = jieba.cut_for_search(worksheet.cell(i, 1).value)
+            colums = [
+                'model_id', 'real_name', 'quantity', 'real_cost', 'market_cost',
+                'price_3w', 'price_1w', 'price_3k', 'price_retail',
+                'hot', 'difficulty'
+            ]
+            j = 0
+            src = {}
+            for c in colums:
+                src[c] = worksheet.cell(i, j).value
+                j += 1
+            src['name'] = ' '.join(product_name)
+
             data = {
                 '_index': index,
                 '_type': 'doc',  # '_type' field is discouraged since ES 6.x, just use the 'doc' as default
-                '_source': {
-                    'model_id': worksheet.cell(i, 0).value,
-                    'name': ' '.join(product_name),
-                    'real_name': worksheet.cell(i, 1).value,
-                    'real_cost': worksheet.cell(i, 2).value,
-                    'market_cost': worksheet.cell(i, 3).value,
-                    'quantity': worksheet.cell(i, 4).value,
-                    'price_3w': worksheet.cell(i, 5).value,
-                    'price_1w': worksheet.cell(i, 6).value,
-                    'price_3k': worksheet.cell(i, 7).value,
-                    'price_retail': worksheet.cell(i, 8).value,
-                    'hot': worksheet.cell(i, 9).value,
-                    'difficulty': worksheet.cell(i, 10).value,
-                },
+                '_source': src,
                 '_id': worksheet.cell(i, 0).value,
                 'doc_as_upsert': True,
                 '_op_type': 'index'
@@ -86,7 +85,7 @@ def search(message):
               f"3千批价：{src['price_3k']}元\n" \
               f"零售价格：{src['price_retail']}元\n" \
               f"热销程度：{src['hot']}\n" \
-              f"进货难度：{src['difficulty']}\n"
+              f"采购难度：{src['difficulty']}\n"
         docs.append(str)
     return docs
 
