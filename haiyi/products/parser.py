@@ -28,13 +28,15 @@ def read_xls(index, xls_file):
                     'model_id': worksheet.cell(i, 0).value,
                     'name': ' '.join(product_name),
                     'real_name': worksheet.cell(i, 1).value,
-                    'quantity': worksheet.cell(i, 2).value,
-                    'price_3w': worksheet.cell(i, 3).value,
-                    'price_1w': worksheet.cell(i, 4).value,
-                    'price_3k': worksheet.cell(i, 5).value,
-                    'price_retail': worksheet.cell(i, 6).value,
-                    'hot': worksheet.cell(i, 7).value,
-                    'difficulty': worksheet.cell(i, 8).value,
+                    'real_cost': worksheet.cell(i, 2).value,
+                    'market_cost': worksheet.cell(i, 3).value,
+                    'quantity': worksheet.cell(i, 4).value,
+                    'price_3w': worksheet.cell(i, 5).value,
+                    'price_1w': worksheet.cell(i, 6).value,
+                    'price_3k': worksheet.cell(i, 7).value,
+                    'price_retail': worksheet.cell(i, 8).value,
+                    'hot': worksheet.cell(i, 9).value,
+                    'difficulty': worksheet.cell(i, 10).value,
                 },
                 '_id': worksheet.cell(i, 0).value,
                 'doc_as_upsert': True,
@@ -77,6 +79,8 @@ def search(message):
         pname = escape(src['real_name'].strip())
         str = f"<a href='www.baidu.com'>{pname}({src['model_id'].replace('.','-')})</a>\n" \
               f"库存: {src['quantity']}\n" \
+              f"实际成本: {src['real_cost']}\n" \
+              f"市场成本: {src['market_cost']}\n" \
               f"3万批价: {src['price_3w']}元\n" \
               f"1万批价：{src['price_1w']}元\n" \
               f"3千批价：{src['price_3k']}元\n" \

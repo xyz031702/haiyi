@@ -17,6 +17,9 @@ class ProductsFile(models.Model):
         self.products_count = index_docs(xls_file)
         super(ProductsFile, self).save(force_insert, force_update, using, update_fields)
 
+    def __str__(self):
+        return '%s' % self.file.name
+
 
 
 class HaiyiUser(models.Model):
