@@ -21,15 +21,22 @@ def read_xls(index, xls_file):
         # yield temp_src
         while (cell):
             product_name = jieba.cut_for_search(worksheet.cell(i, 1).value)
-            colums = [
-                'model_id', 'real_name', 'quantity', 'real_cost', 'market_cost',
-                'price_3w', 'price_1w', 'price_3k', 'price_retail',
-                'hot', 'difficulty'
-            ]
+            colums = {
+                'model_id': 'str', 'real_name': 'str', 'quantity': 'int', 'real_cost': 'float', 'market_cost': 'float',
+                'price_3w': 'float', 'price_1w': 'float', 'price_3k': 'float', 'price_retail': 'float',
+                'hot': 'int', 'difficulty': 'int'
+            }
             j = 0
             src = {}
-            for c in colums:
-                src[c] = worksheet.cell(i, j).value
+            for k, t in colums.items():
+                v = worksheet.cell(i, j).value
+                if t == 'str':
+                    v = v.strip()
+                elif v == 'int':
+                    v = int(v) if v else 0
+                else:
+                    v = round(float(v), 2) if v else 0
+                src[k] = v
                 j += 1
             src['name'] = ' '.join(product_name)
 
@@ -78,15 +85,15 @@ def search(message):
         pname = escape(src['real_name'].strip())
         quality = int(src['quantity']) if src['quantity'] else 0
         str = f"<a href='www.baidu.com'>{pname}</a>\n" \
-              f"库存: {quality}\n" \
-              f"实价: {src['real_cost']}元\n" \
-              f"市价: {src['market_cost']}元\n" \
-              f"3w: {src['price_3w']}元\n" \
-              f"1w：{src['price_1w']}元\n" \
-              f"3k：{src['price_3k']}元\n" \
-              f"零售：{src['price_retail']}元\n" \
-              f"热销：{src['hot']}\n" \
-              f"采购：{src['difficulty']}"
+              f"库存数量: {quality}\n" \
+              f"实际成本: {src['real_cost']}元\n" \
+              f"市场成本: {src['market_cost']}元\n" \
+              f"3w售价: {src['price_3w']}元\n" \
+              f"1w售价：{src['price_1w']}元\n" \
+              f"3k售价：{src['price_3k']}元\n" \
+              f"零售价格：{src['price_retail']}元\n" \
+              f"热卖程度：{src['hot']}\n" \
+              f"采购难度：{src['difficulty']}"
         docs.append(str)
     return docs
 
