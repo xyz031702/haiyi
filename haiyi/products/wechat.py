@@ -96,6 +96,8 @@ def search_item(to_user, from_user, message):
         i += 1
         content = '%s\n\n%d. %s' % (content, i, p)
     content = content.strip()
+    if content == '':
+        content = '无结果'
     logger.info('content_len=%s', len(content))
     return content
 

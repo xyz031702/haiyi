@@ -21,22 +21,30 @@ def read_xls(index, xls_file):
         # yield temp_src
         while (cell):
             product_name = jieba.cut_for_search(worksheet.cell(i, 1).value)
-            colums = {
-                'model_id': 'str', 'real_name': 'str', 'quantity': 'int', 'real_cost': 'float', 'market_cost': 'float',
-                'price_3w': 'float', 'price_1w': 'float', 'price_3k': 'float', 'price_retail': 'float',
-                'hot': 'int', 'difficulty': 'int'
-            }
+            columns = [
+                ('model_id', 'str'),
+                ('real_name', 'str'),
+                ('quantity', 'int'),
+                ('real_cost', 'float'),
+                ('market_cost', 'float'),
+                ('price_3w', 'float'),
+                ('price_1w', 'float'),
+                ('price_3k', 'float'),
+                ('price_retail', 'float'),
+                ('hot', 'int'),
+                ('difficulty', 'int')
+            ]
             j = 0
             src = {}
-            for k, t in colums.items():
+            for c in columns:
                 v = worksheet.cell(i, j).value
-                if t == 'str':
+                if c[1] == 'str':
                     v = v.strip()
-                elif v == 'int':
+                elif c[1] == 'int':
                     v = int(v) if v else 0
-                else:
+                elif c[1] == 'float':
                     v = round(float(v), 2) if v else 0
-                src[k] = v
+                src[c[0]] = v
                 j += 1
             src['name'] = ' '.join(product_name)
 
@@ -80,6 +88,7 @@ def search(message):
     es_request.append(json.dumps(req_body) + ' \n')
     res = es.es.search(index='haiyi_es', body=req_body, request_timeout=120)
     docs = []
+    count = 0
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
         pname = escape(src['real_name'].strip())
@@ -94,6 +103,9 @@ def search(message):
               f"零售价格：{src['price_retail']}元\n" \
               f"热卖程度：{src['hot']}\n" \
               f"采购难度：{src['difficulty']}"
+        count += 1
+        if count >= 9:
+            break
         docs.append(str)
     return docs
 
