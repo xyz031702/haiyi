@@ -9,17 +9,18 @@ class ProductsFile(models.Model):
     file = models.FileField('批量文件', upload_to=settings.UPLOAD_FOLDER)
     pub_date = models.DateTimeField('上传时间', auto_now_add=True)
     products_count = models.IntegerField('商品总数', default=0)
+    wrong_rows = models.URLField(max_length=256)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         super(ProductsFile, self).save(force_insert, force_update, using, update_fields)
         xls_file = self.file.name
         self.products_count = index_docs(xls_file)
+        self.wrong_rows = os.path.join(settings.UPLOAD_FOLDER, 'exception.csv')
         super(ProductsFile, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return '%s' % self.file.name
-
 
 
 class HaiyiUser(models.Model):

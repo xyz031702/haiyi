@@ -10,13 +10,39 @@ from xml.sax.saxutils import escape
 logger = logging.getLogger(__name__)
 
 
+def check_type(data_value, data_type):
+    if data_type == 'float':
+        try:
+            float(data_value)
+        except ValueError:
+            logger.error('check_type_inconsistent|value=%s, type=%s', data_value, data_type)
+            return False
+    if data_type == 'int':
+        try:
+            int(data_value)
+        except ValueError:
+            logger.error('check_type_inconsistent|value=%s, type=%s', data_value, data_type)
+            return False
+    return True
+
+
+def get_line(worksheet, i, columns_num):
+    v = []
+    for j in range(columns_num):
+        v.append(worksheet.cell(i, j))
+    line = '%s,%s\n' % (i, ','.join(v))
+    return line
+
+
 def read_xls(index, xls_file):
     # xls_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, 'products11.23.xls')
     logging.info('read_xls|index=%s, xls_file=$s', index, xls_file)
     workbook = xlrd.open_workbook(xls_file, on_demand=True)
     worksheet = workbook.sheet_by_index(0)
+    wrong_rows = open(os.path.join(settings.UPLOAD_FOLDER, 'exception.csv'), 'w')
     i = 2
     cell = worksheet.cell(i, 0)
+    all_ok = True
     try:
         # yield temp_src
         while (cell):
@@ -38,6 +64,9 @@ def read_xls(index, xls_file):
             src = {}
             for c in columns:
                 v = worksheet.cell(i, j).value
+                if not check_type(data_type=c[1], data_value=v):
+                    wrong_rows.write(get_line(worksheet, i, len(columns)))
+                    all_ok = False
                 if c[1] == 'str':
                     v = v.strip()
                 elif c[1] == 'int':
@@ -63,6 +92,9 @@ def read_xls(index, xls_file):
         logger.error(f'exception:{e}')
     finally:
         workbook.release_resources()
+        if all_ok:
+            wrong_rows.write('all ok')
+        wrong_rows.close()
 
 
 es = ES_Conn()
