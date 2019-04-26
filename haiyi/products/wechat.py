@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import time
 import logging
-from haiyi.products.parser import search
+from haiyi.tools.es_handler import search
 from haiyi.models import HaiyiUser
 import datetime
 

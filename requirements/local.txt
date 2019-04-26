@@ -4,3 +4,5 @@ gunicorn==19.9.0
 xlrd
 jieba
 elasticsearch
+psycopg2-binary
+django-environ==0.4.5
