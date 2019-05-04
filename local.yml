@@ -19,6 +19,7 @@ services:
     ports:
     - "8000:8000"
     privileged: true
+    restart: always
 
   postgres:
     hostname: 'postgres_haiyi'
@@ -43,7 +44,7 @@ services:
     volumes:
       - ./compose/config/nginx/conf.d:/etc/nginx/conf.d
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./static/:/static/
+      - ./static:/static
     privileged: true
     #command: /ubuntu-tools.sh
 #    network_mode: "host"
