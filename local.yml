@@ -16,7 +16,7 @@ services:
     volumes:
       - .:/app
     env_file: .env
-#    command: ["sleep","1d"]
+    #command: ["sleep","1d"]
     command: /gunicorn.sh
     ports:
     - "8000:8000"
