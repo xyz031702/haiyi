@@ -8,6 +8,8 @@ services:
   django: &django
     container_name: django_haiyi
     hostname: django_haiyi
+    depends_on:
+      - postgres
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
