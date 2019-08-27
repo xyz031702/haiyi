@@ -91,7 +91,7 @@ def get_doc_count(index):
 
 
 def search(message):
-    WECHAT_LIMIT = 2048
+    WECHAT_LIMIT = 2000
     print('keyword=%s' % message)
     es_request = []
     # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
@@ -100,7 +100,7 @@ def search(message):
     es_request.append(json.dumps(req_body) + ' \n')
     res = ES_Conn().search(index='haiyi_es', body=req_body, request_timeout=120)
     docs = []
-    length = 0
+    count = 0
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
         pname = escape(src['real_name'].strip())
@@ -115,8 +115,8 @@ def search(message):
                   f"零售价格：{src['price_retail']}元\n" \
                   f"热卖程度：{src['hot']}\n" \
                   f"采购难度：{src['difficulty']}"
-        length += len(content.encode('utf-8'))
-        if length >= WECHAT_LIMIT:
+        count += 1
+        if count >= 20:
             break
         docs.append(content)
     return docs

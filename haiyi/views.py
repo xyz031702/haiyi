@@ -38,7 +38,7 @@ def chat_receiver(request):
             return HttpResponse("no match")
     else:
         othercontent = autoreply(request.body)
-        logger.info('reply=%s', othercontent)
+        logger.info('reply=%s, length=%s', othercontent, len(othercontent))
         return HttpResponse(othercontent)
 
 

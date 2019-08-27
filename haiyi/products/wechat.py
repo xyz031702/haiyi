@@ -46,7 +46,7 @@ def autoreply(data):
 class Msg(object):
     def __init__(self, **kwargs):
         self.ToUserName = kwargs.get('ToUserName')
-        self.FromUserName = kwargs.get('FromUserName') # it is the openid of a user
+        self.FromUserName = kwargs.get('FromUserName')  # it is the openid of a user
         self.CreateTime = kwargs.get('CreateTime')
         self.MsgType = kwargs.get('MsgType')
         self.MsgId = kwargs.get('MsgId')
@@ -82,9 +82,11 @@ def handle_msg(to_user, from_user, message):
     else:
         return search_item(to_user, from_user, message)
 
-#https://api.weixin.qq.com/cgi-bin/user/info?access_token=681f2b6630982621edc25b1674760a7d&openid=OPENID&lang=zh_CN
+
+# https://api.weixin.qq.com/cgi-bin/user/info?access_token=681f2b6630982621edc25b1674760a7d&openid=OPENID&lang=zh_CN
 
 def search_item(to_user, from_user, message):
+    WECHAT_LIMIT = 2048
     members = HaiyiUser.objects.filter(open_id=from_user). \
         filter(active=True). \
         filter(end_date__gte=datetime.date.today())
@@ -93,14 +95,18 @@ def search_item(to_user, from_user, message):
     products = search(message)
     content = ''
     i = 0
+    length = 0
+    current_content=""
     for p in products:
         i += 1
         content = '%s\n\n%d. %s' % (content, i, p)
-    content = content.strip()
-    if content == '':
-        content = '无结果'
-    logger.info('content_len=%s', len(content))
-    return content
+        length += len(content.encode('utf-8'))
+        if length >= WECHAT_LIMIT:
+            break
+        current_content = content.strip()
+    if current_content == '':
+        current_content = '无结果'
+    return current_content
 
 
 def echo_openid(to_user, from_user, message):
