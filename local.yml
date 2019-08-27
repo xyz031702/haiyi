@@ -21,6 +21,7 @@ services:
     ports:
     - "8000:8000"
     privileged: true
+    restart: always
 
   postgres:
     hostname: 'postgres_haiyi'

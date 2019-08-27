@@ -46,7 +46,7 @@ def autoreply(data):
 class Msg(object):
     def __init__(self, **kwargs):
         self.ToUserName = kwargs.get('ToUserName')
-        self.FromUserName = kwargs.get('FromUserName')
+        self.FromUserName = kwargs.get('FromUserName') # it is the openid of a user
         self.CreateTime = kwargs.get('CreateTime')
         self.MsgType = kwargs.get('MsgType')
         self.MsgId = kwargs.get('MsgId')
@@ -82,13 +82,17 @@ def handle_msg(to_user, from_user, message):
     else:
         return search_item(to_user, from_user, message)
 
+#https://api.weixin.qq.com/cgi-bin/user/info?access_token=681f2b6630982621edc25b1674760a7d&openid=OPENID&lang=zh_CN
 
 def search_item(to_user, from_user, message):
     members = HaiyiUser.objects.filter(open_id=from_user). \
         filter(active=True). \
         filter(end_date__gte=datetime.date.today())
     if not members:
-        return '不是激活用户'
+        HaiyiUser.objects.filter(open_id=from_user). \
+            filter(active=True). \
+            filter(end_date__gte=datetime.date.today())
+        return '不是激活用户, 请联系海蚁管理员。'
     products = search(message)
     content = ''
     i = 0
