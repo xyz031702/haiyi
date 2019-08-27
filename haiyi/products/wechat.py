@@ -96,14 +96,12 @@ def search_item(to_user, from_user, message):
     logger.info("search_item|products=%s", len(products))
     content = ""
     i = 0
-    length = 0
-    current_content=""
+    current_content = ""
     for p in products:
         i += 1
         content = '%s\n\n%d. %s' % (content, i, p)
-        length += len(content)
-        if length >= WECHAT_LIMIT:
-            logger.info("search_item|content_lenght=%s", length)
+        if len(content) >= WECHAT_LIMIT:
+            logger.info("search_item|content_lenght=%s", len(content))
             break
         current_content = content.strip()
     if current_content == '':
