@@ -93,15 +93,17 @@ def search_item(to_user, from_user, message):
     if not members:
         return '不是激活用户, 请联系海蚁管理员。'
     products = search(message)
-    content = ''
+    logger.info("search_item|products=%s", len(products))
+    content = ""
     i = 0
     length = 0
     current_content=""
     for p in products:
         i += 1
         content = '%s\n\n%d. %s' % (content, i, p)
-        length += len(content.encode('utf-8'))
+        length += len(content)
         if length >= WECHAT_LIMIT:
+            logger.info("search_item|content_lenght=%s", length)
             break
         current_content = content.strip()
     if current_content == '':
