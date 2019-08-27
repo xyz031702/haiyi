@@ -70,9 +70,9 @@ def bulk_optimized(func):
 
 
 @bulk_optimized
-def bulk_index(index, xls_file, generator, **kwargs):
+def bulk_index(es, index, xls_file, generator, **kwargs):
     logger.info('bulk_index|index=%s', index)
-    success, fail = bulk(generator(index, xls_file, **kwargs))
+    success, fail = bulk(es, generator(index, xls_file, **kwargs))
     return success, fail
 
 
