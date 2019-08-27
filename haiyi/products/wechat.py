@@ -89,9 +89,6 @@ def search_item(to_user, from_user, message):
         filter(active=True). \
         filter(end_date__gte=datetime.date.today())
     if not members:
-        HaiyiUser.objects.filter(open_id=from_user). \
-            filter(active=True). \
-            filter(end_date__gte=datetime.date.today())
         return '不是激活用户, 请联系海蚁管理员。'
     products = search(message)
     content = ''

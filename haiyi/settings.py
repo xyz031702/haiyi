@@ -80,10 +80,13 @@ DATABASES = {
         'NAME': env('POSTGRES_DB_NAME', default='haiyi'),
         'USER': env('POSTGRES_USER', default='haiyi'),
         'PASSWORD': env('POSTGRES_PASSWORD', default=''),
-        'HOST': 'haiyi_postgres_1',
+        'HOST': env("POSTGRES_HOSTNAME", default='haiyi_postgres_1'),
         'PORT': env('POSTGRES_PORT', default=5432),
     }
 }
+
+ES_HOST = env("ES_HOST", default="elasticsearch_haiyi")
+ES_PORT = env("ES_PORT", default=9200)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

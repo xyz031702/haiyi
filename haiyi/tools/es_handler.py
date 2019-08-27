@@ -4,6 +4,7 @@ from elasticsearch.helpers import bulk
 import logging
 import json
 from xml.sax.saxutils import escape
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +14,10 @@ class ES_Conn(object):
 
     def __init__(self):
         if not ES_Conn.__instance:
-            ES_Conn.__instance = self.__conn(hosts=['host.docker.internal', 'localhost', 'elasticsearch_haiyi'],
-                                             port=9200,
-                                             es_payload_limit=100)
+            ES_Conn.__instance = self.__conn(
+                hosts=[settings.ES_HOST],
+                port=settings.ES_PORT,
+                es_payload_limit=100)
         self.__dict__['_ES_conn__instance'] = ES_Conn.__instance
 
     def __conn(self, hosts, port, es_payload_limit, username=None, password=None, cert=None, **kwargs):
