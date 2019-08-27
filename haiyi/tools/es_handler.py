@@ -91,6 +91,7 @@ def get_doc_count(index):
 
 
 def search(message):
+    WECHAT_LIMIT = 2048
     print('keyword=%s' % message)
     es_request = []
     # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
@@ -99,23 +100,23 @@ def search(message):
     es_request.append(json.dumps(req_body) + ' \n')
     res = ES_Conn().search(index='haiyi_es', body=req_body, request_timeout=120)
     docs = []
-    count = 0
+    length = 0
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
         pname = escape(src['real_name'].strip())
         quality = int(src['quantity']) if src['quantity'] else 0
-        str = f"<a href='www.baidu.com'>{pname}</a>\n" \
-              f"库存数量: {quality}\n" \
-              f"实际成本: {src['real_cost']}元\n" \
-              f"市场成本: {src['market_cost']}元\n" \
-              f"3w售价: {src['price_3w']}元\n" \
-              f"1w售价：{src['price_1w']}元\n" \
-              f"3k售价：{src['price_3k']}元\n" \
-              f"零售价格：{src['price_retail']}元\n" \
-              f"热卖程度：{src['hot']}\n" \
-              f"采购难度：{src['difficulty']}"
-        count += 1
-        if count >= 9:
+        content = f"<a href='www.baidu.com'>{pname}</a>\n" \
+                  f"库存数量: {quality}\n" \
+                  f"实际成本: {src['real_cost']}元\n" \
+                  f"市场成本: {src['market_cost']}元\n" \
+                  f"3w售价: {src['price_3w']}元\n" \
+                  f"1w售价：{src['price_1w']}元\n" \
+                  f"3k售价：{src['price_3k']}元\n" \
+                  f"零售价格：{src['price_retail']}元\n" \
+                  f"热卖程度：{src['hot']}\n" \
+                  f"采购难度：{src['difficulty']}"
+        length += len(content.encode('utf-8'))
+        if length >= WECHAT_LIMIT:
             break
-        docs.append(str)
+        docs.append(content)
     return docs
