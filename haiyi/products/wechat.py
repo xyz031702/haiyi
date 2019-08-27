@@ -100,8 +100,9 @@ def search_item(to_user, from_user, message):
     for p in products:
         i += 1
         content = '%s\n\n%d. %s' % (content, i, p)
-        if len(content.encode("utf-8")) >= WECHAT_LIMIT:
-            logger.info("search_item|content_lenght=%s", len(content))
+        lenth = len(content.encode("utf-8"))
+        if lenth >= WECHAT_LIMIT:
+            logger.info("search_item|content_lenght=%s", lenth)
             break
         current_content = content.strip()
     if current_content == '':
