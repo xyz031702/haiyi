@@ -41,6 +41,7 @@ services:
     image: neilpang/nginx-proxy
     ports:
       - "80:80"
+      - "8888:8888"
     depends_on:
       - django
     volumes:

@@ -120,3 +120,17 @@ def search(message):
             break
         docs.append(content)
     return docs
+
+
+
+def dialog_search(keyword, index):
+    print('dialog_match|keyword=%s' % keyword)
+    es_request = []
+    # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
+    req_body = {'query': {'match': {'question': keyword.strip()}}}
+    # es_request.append(req_head)
+    es_request.append(json.dumps(req_body) + ' \n')
+    res = ES_Conn().search(index=index, body=req_body, request_timeout=120)
+    docs = []
+    count = 0
+    return res.get('hits', {}).get('hits')

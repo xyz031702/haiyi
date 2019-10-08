@@ -113,3 +113,5 @@ jira==2.0.0
 
 # Influxdb client
 influxdb==5.2.0
+
+pyyaml
