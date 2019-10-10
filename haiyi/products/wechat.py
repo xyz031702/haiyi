@@ -3,6 +3,7 @@ import time
 import logging
 from haiyi.tools.es_handler import search
 from haiyi.models import HaiyiUser
+from haiyi.crm.cold_call.dialog import dialog_search_v1
 import datetime
 
 logger = logging.getLogger(__name__)
@@ -80,6 +81,8 @@ def handle_msg(to_user, from_user, message):
     if message == 'dy0000':
         return echo_openid(to_user, from_user, message)
     else:
+        if from_user in ["okvHJs4S-VszW7-5G2wgBgU2HPXg", "okvHJs3Xf6nxtef-L5rfhBjCy-BI"]:
+            return dialog_search_v1(message)
         return search_item(to_user, from_user, message)
 
 
