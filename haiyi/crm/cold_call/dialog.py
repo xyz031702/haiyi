@@ -2,24 +2,14 @@ from yaml import safe_load
 import json
 import uuid
 from haiyi.tools.es_handler import dialog_search
+from haiyi.tools.es_handler import bulk_index_1
 
 customers = {}
 
 
 def init():
-    with open("dialog_script.yaml", "r") as r:
-        l = safe_load(r)
-    for c in l["customer"]:
-        for k, v in c.items():
-            customers[k] = v
-
-    l.pop("customer")
-    for k, v in l.items():
-        unit = {
-            "question": v["content"],
-            "answers:": v["answers"]
-        }
-        dialog_index(unit)
+    filename = "dialog_script.yaml"
+    bulk_index_1(index=get_index(), generator=dialog_index(filename))
 
 
 def get_index():
@@ -31,7 +21,7 @@ def uuid_question(question):
     return str(uuid_x)
 
 
-def dialog_index(unit):
+def dialog_index(file):
     """
     :param unit:
     {
@@ -46,21 +36,29 @@ def dialog_index(unit):
     }
     :return:
     """
-    anws = []
-    for u in unit["answers"]:
-        element = "%s|%s" % (",".join(u["customers"]), u["content"])
-        anws.append(element)
-    data = {
-        "_id": uuid_question(unit["question"]),
-        "_index": get_index(),
-        "_type": "doc",  # '_type' field is discouraged since ES 6.x, just use the 'doc' as default
-        "_source": {"question": unit["question"]},
-        "question": unit["question"],
-        "answers": anws,
-        "doc_as_upsert": True,
-        "_op_type": 'index'
-    }
-    yield data
+    with open(file, "r") as r:
+        l = safe_load(r)
+    for c in l["customer"]:
+        for k, v in c.items():
+            customers[k] = v
+
+    l.pop("customer")
+    for k, v in l.items():
+        anws = []
+        for u in v["answers"]:
+            element = "%s|%s" % (",".join(u["customers"]), u["content"])
+            anws.append(element)
+        data = {
+            "_id": uuid_question(v["question"]),
+            "_index": get_index(),
+            "_type": "doc",  # '_type' field is discouraged since ES 6.x, just use the 'doc' as default
+            "_source": {"question": v["question"]},
+            "question": v["question"],
+            "answers": anws,
+            "doc_as_upsert": True,
+            "_op_type": 'index'
+        }
+        yield data
 
 
 # memory={}
