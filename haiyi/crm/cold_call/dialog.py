@@ -9,7 +9,7 @@ customers = {}
 
 def init():
     filename = "dialog_script.yaml"
-    bulk_index_1(index=get_index(), generator=dialog_index(filename))
+    bulk_index_1(index=get_index(), generator=dialog_index)
 
 
 def get_index():
@@ -21,7 +21,7 @@ def uuid_question(question):
     return str(uuid_x)
 
 
-def dialog_index(file):
+def dialog_index():
     """
     :param unit:
     {
@@ -36,7 +36,8 @@ def dialog_index(file):
     }
     :return:
     """
-    with open(file, "r") as r:
+    filename="dialog_script.yaml"
+    with open(filename, "r") as r:
         l = safe_load(r)
     for c in l["customer"]:
         for k, v in c.items():
