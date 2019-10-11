@@ -5,6 +5,7 @@ from haiyi.tools.es_handler import dialog_search
 from haiyi.tools.es_handler import bulk_index_1
 import logging
 import re
+
 logger = logging.getLogger(__name__)
 
 customers = {}
@@ -71,23 +72,24 @@ def dialog_index():
 def dialog_search_v1(keyword):
     result = {}
     customer_type = "ABCDEF"
-    pattern="^([A-F]|[a-f])+,"
+    pattern = "^([A-F]|[a-f])+,"
     x = re.match(pattern, keyword)
     if x:
-        customer_type=x
+        customer_type = x
         keyword = keyword.split(",")[1]
     customer_type_set = set(list(customer_type))
     hits = dialog_search(keyword, get_index())
     answers = []
     for hit in hits:
         src = hit['_source']
-        logger.info("dialog_search_v1|src=%s", src)
+
         # q = src["question"]
         i = 0
         for ans in src["answers"]:
             arr = ans.split("|")
             customers = arr[0].split(",")
-
+            logger.info("dialog_search_v1|customer_type_set=%s,customers=%s", customer_type_set, set(customers))
             if customer_type_set.issubset(set(customers)):
                 answers.append("%s. %s" % (i, arr[1]))
+                i += 1
     return "\n".join(answers)
