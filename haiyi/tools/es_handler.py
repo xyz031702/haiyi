@@ -76,6 +76,13 @@ def bulk_index(es, index, xls_file, generator, **kwargs):
     return success, fail
 
 
+def bulk_index_1(index, generator, **kwargs):
+    es = ES_Conn()
+    logger.info('bulk_index|index=%s', index)
+    success, fail = bulk(es, generator(index, **kwargs))
+    return success, fail
+
+
 def create_new_index(index):
     es = ES_Conn()
     index_exist = es.indices.exists(index)
