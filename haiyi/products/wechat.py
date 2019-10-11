@@ -5,6 +5,7 @@ from haiyi.tools.es_handler import search
 from haiyi.models import HaiyiUser
 from haiyi.crm.cold_call.dialog import dialog_search_v1
 import datetime
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,8 @@ def autoreply(data):
         replyMsg = TextMsg(toUserName=to_user, fromUserName=from_user, content=reply)
         return replyMsg.send()
     except Exception as e:
-        return e
+        logger.info(traceback.format_exc())
+        return "error|内部错误"
 
 
 class Msg(object):
