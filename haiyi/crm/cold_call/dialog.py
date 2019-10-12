@@ -69,27 +69,29 @@ def dialog_index():
 
 
 # memory={}
-def dialog_search_v1(keyword):
-    result = {}
+def dialog_search_v1(keyword, match_most=10):
+    """
+    :param keyword:
+    :param match_most: if multiple questions are matched, we return the first 10
+    :return:
+    """
     customer_type = "ABCDEF"
     pattern = "^([A-F]|[a-f])+,"
     x = re.match(pattern, keyword)
     if x:
-        customer_type = x
+        customer_type = x.group().replace(",", "")
         keyword = keyword.split(",")[1]
     customer_type_set = set(list(customer_type))
     hits = dialog_search(keyword, get_index())
     answers = []
+    i = 0
     for hit in hits:
         src = hit['_source']
-
-        # q = src["question"]
-        i = 0
         for ans in src["answers"]:
             arr = ans.split("|")
             customers = arr[0].split(",")
             logger.info("dialog_search_v1|customer_type_set=%s,customers=%s", customer_type_set, set(customers))
             if customer_type_set.issubset(set(customers)):
-                answers.append("%s. %s" % (i, arr[1]))
+                answers.append("<b>%s</b>. %s" % (i, arr[1]))
                 i += 1
     return "\n".join(answers)
