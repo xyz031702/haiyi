@@ -75,6 +75,7 @@ def dialog_search_v1(keyword, match_most=10):
     :param match_most: if multiple questions are matched, we return the first 10
     :return:
     """
+    keyword.replace("，", ",")
     customer_type = "ABCDEF"
     pattern = "^([A-F]|[a-f])+,"
     x = re.match(pattern, keyword)
