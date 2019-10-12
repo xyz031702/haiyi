@@ -79,9 +79,9 @@ def dialog_search_v1(keyword, match_most=10):
     pattern = "^([A-F]|[a-f])+,"
     x = re.match(pattern, keyword)
     if x:
-        customer_type = x.group().replace(",", "")
+        customer_type = x.group().replace(",", "").lower()  # lower the case
         keyword = keyword.split(",")[1]
-    customer_type_set = set(list(customer_type))
+    customer_type_set = set(list(customer_type))  # remove duplicate input,e.g.:  Aaa
     hits = dialog_search(keyword, get_index())
     answers = []
     i = 0
@@ -89,9 +89,9 @@ def dialog_search_v1(keyword, match_most=10):
         src = hit['_source']
         for ans in src["answers"]:
             arr = ans.split("|")
-            customers = arr[0].split(",")
+            customers = arr[0].lower().split(",")  # lower the case, remove duplicate input,e.g.:  Aaa
             logger.info("dialog_search_v1|customer_type_set=%s,customers=%s", customer_type_set, set(customers))
             if customer_type_set.issubset(set(customers)):
-                answers.append("<b>%s</b>. %s" % (i, arr[1]))
+                answers.append("[%s]. %s" % (i, arr[1]))
                 i += 1
     return "\n".join(answers)
