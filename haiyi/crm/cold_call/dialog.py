@@ -75,9 +75,10 @@ def dialog_search_v1(keyword, match_most=10):
     :param match_most: if multiple questions are matched, we return the first 10
     :return:
     """
-    keyword.replace("，", ",")
+    keyword = keyword.replace("，", ",")
+    logger.info("dialog_search_v1|keyword=%s", keyword)
     customer_type = "ABCDEF"
-    pattern = "^([A-F]|[a-f])+,"
+    pattern = "^([A-Z|a-z])+,"
     x = re.match(pattern, keyword)
     if x:
         customer_type = x.group().replace(",", "").lower()  # lower the case
@@ -85,7 +86,7 @@ def dialog_search_v1(keyword, match_most=10):
     customer_type_set = set(list(customer_type))  # remove duplicate input,e.g.:  Aaa
     hits = dialog_search(keyword, get_index())
     answers = []
-    i = 0
+    i = 1
     for hit in hits:
         src = hit['_source']
         for ans in src["answers"]:
