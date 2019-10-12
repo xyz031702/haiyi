@@ -93,7 +93,7 @@ def dialog_search_v1(keyword, match_most=10):
             arr = ans.split("|")
             customers = arr[0].lower().split(",")  # lower the case, remove duplicate input,e.g.:  Aaa
             logger.info("dialog_search_v1|customer_type_set=%s,customers=%s, ans=%s", customer_type_set, set(customers),ans)
-            if customer_type_set.issuperset(set(customers)):
+            if customer_type_set.intersection(set(customers)):
                 answers.append("[%s]. %s" % (i, arr[1]))
                 i += 1
     return "\n".join(answers)
