@@ -3,14 +3,15 @@ import time
 import logging
 from haiyi.tools.es_handler import search
 from haiyi.models import HaiyiUser
-from haiyi.crm.cold_call.dialog import dialog_search_v1
+from haiyi.crm.cold_call.dialog import dialog_huashu
+from haiyi.constants import CHANNELS
 import datetime
 import traceback
 
 logger = logging.getLogger(__name__)
 
 
-def autoreply(data):
+def autoreply(data, channel):
     try:
         logger.info('data from wechat=%s', data)
         #        webData = request.body
@@ -24,7 +25,7 @@ def autoreply(data):
 
         if msg_type == 'text':
             content = xmlData.find('Content').text
-            reply = handle_msg(to_user, from_user, content)
+            reply = handle_msg(channel, to_user, from_user, content)
         elif msg_type == 'image':
             reply = "图片已收到,谢谢"
         elif msg_type == 'voice':
@@ -79,13 +80,16 @@ class TextMsg(Msg):
         return xml_reply
 
 
-def handle_msg(to_user, from_user, message):
+def handle_msg(channel, to_user, from_user, message):
     if message == 'dy0000':
         return echo_openid(to_user, from_user, message)
     else:
-        if from_user in ["okvHJs4S-VszW7-5G2wgBgU2HPXg", "okvHJs3Xf6nxtef-L5rfhBjCy-BI"]:
-            return dialog_search_v1(message)
-        return search_item(to_user, from_user, message)
+        if channel == CHANNELS.JIAGE:
+            return search_item(to_user, from_user, message)
+        elif channel == CHANNELS.HUASHU:
+            return dialog_huashu(message)
+        else:
+            return {"error": "错误频道"}
 
 
 # https://api.weixin.qq.com/cgi-bin/user/info?access_token=681f2b6630982621edc25b1674760a7d&openid=OPENID&lang=zh_CN
