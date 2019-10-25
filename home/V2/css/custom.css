@@ -1,0 +1,63 @@
+body, h1, h2, h3, a, button, p {
+	font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif !important;
+	/*font-family: 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+}
+
+.padding-left-40 {
+	padding-left: 40px;
+}
+
+.container {
+    max-width: 950px;
+}
+
+.mr1 a {
+	width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    border: 2px solid #5a5661;
+    background: transparent;
+    color: #2d2b31;
+    padding: 14px 16px;
+    display: block;
+}
+
+.fa-2x {
+    font-size: 30px !important;
+}
+
+.pb-c1 {
+	padding-bottom: 8px;
+}
+
+.no-visible {
+  visibility: hidden;
+}
+
+.animated {
+  visibility: visible !important;
+}
+
+.bg-purple {
+	background-color: #7a3277;
+}
+
+.bg--secondary-color {
+	background-color: #1169b0;
+	color: #fff;
+}
+
+.btn--outline, .btn--outline:visited {
+	background-color: transparent;
+    border-color: #f5f4f0;
+    border-width: 2px;
+    color: #fff;
+}
+
+.form-control {
+	border-bottom: 2px solid #f5f4f0;
+}
+
+.btn-blue {
+	background-color: #1169b0 !important;
+}
