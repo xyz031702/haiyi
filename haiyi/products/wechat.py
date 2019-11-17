@@ -83,7 +83,7 @@ class TextMsg(Msg):
 
 
 def handle_msg(channel, to_user, from_user, message):
-    if str.startswith(message, 'dy '):
+    if str.startswith(message.lower(), 'dy '):
         wechat_id = message.split(" ")[1]
         r = echo_openid(to_user, from_user, wechat_id)
         if "error" in r:
@@ -147,6 +147,7 @@ def echo_openid(to_user, from_user, wechat_id):
         if r.status_code == 200 and "nickname" in r.json():
             nickname = r.json()["nickname"]
             haiyi_user = HaiyiUser(
+                end_date=datetime.date.today() + datetime.timedelta(days=365),
                 active=False,
                 open_id=from_user,
                 name=nickname,
