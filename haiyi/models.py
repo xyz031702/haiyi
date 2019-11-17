@@ -76,7 +76,7 @@ class HaiyiUser(models.Model):
     ]
 
     def __str__(self):
-        return '%s(%s)' % (self.name, self.account_id)
+        return '%s(%s)  激活=%s' % (self.name, self.account_id, self.active)
 
 
 class ThirdPartyProduct(models.Model):
