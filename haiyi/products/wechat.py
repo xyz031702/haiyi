@@ -7,6 +7,8 @@ from haiyi.crm.cold_call.dialog import dialog_huashu
 from haiyi.constants import CHANNELS
 import datetime
 import traceback
+import requests
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -81,18 +83,20 @@ class TextMsg(Msg):
 
 
 def handle_msg(channel, to_user, from_user, message):
-    if message == 'dy0000':
-        return echo_openid(to_user, from_user, message)
+    if str.startswith(message, 'dy '):
+        wechat_id = message.split(" ")[1]
+        r = echo_openid(to_user, from_user, wechat_id)
+        if "error" in r:
+            return r["error"]
+        return r["result"]
     else:
         if channel == CHANNELS.JIAGE:
             return search_item(to_user, from_user, message)
         elif channel == CHANNELS.HUASHU:
             return dialog_huashu(message)
         else:
-            return {"error": "错误频道"}
+            return "错误频道"
 
-
-# https://api.weixin.qq.com/cgi-bin/user/info?access_token=681f2b6630982621edc25b1674760a7d&openid=OPENID&lang=zh_CN
 
 def search_item(to_user, from_user, message):
     WECHAT_LIMIT = 2048
@@ -119,5 +123,41 @@ def search_item(to_user, from_user, message):
     return current_content
 
 
-def echo_openid(to_user, from_user, message):
-    return from_user
+def echo_openid(to_user, from_user, wechat_id):
+    members = HaiyiUser.objects.filter(open_id=from_user). \
+        filter(end_date__gte=datetime.date.today())
+    if members:
+        return '用户已注册, 确认开通或退订请联系海蚁管理员。'
+    url = "https://api.weixin.qq.com/cgi-bin/token"
+    params = {
+        "grant_type": "client_credential",
+        "appid": settings.WECHAT_APP_ID,
+        "secret": settings.WECHAT_APP_SECRET,
+    }
+    r = requests.get(url=url, params=params)
+    if r.status_code == 200 and "access_token" in r.json():
+        access_token = r.json()["access_token"]
+        params = {
+            "access_token": access_token,
+            "lang": "zh_C",
+            "openid": from_user
+        }
+        url = "https://api.weixin.qq.com/cgi-bin/user/info"
+        r = requests.get(url=url, params=params)
+        if r.status_code == 200 and "nickname" in r.json():
+            nickname = r.json()["nickname"]
+            haiyi_user = HaiyiUser(
+                active=False,
+                open_id=from_user,
+                name=nickname,
+                account_id=wechat_id,
+            )
+            haiyi_user.save()
+            logger.warning("echo_openid|save_user|user=%s, wechat_id=%s", haiyi_user.name, haiyi_user.account_id)
+        else:
+            logger.warning("echo_openid|fetch_user_info|error=%s", r.text)
+            return {"error": "注册失败"}
+    else:
+        logger.warning("echo_openid|get_access_token_info|error=%s", r.text)
+        return {"error": "注册失败"}
+    return {"result": "注册成功，请通知管理员开通"}

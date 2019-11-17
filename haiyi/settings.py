@@ -149,3 +149,6 @@ LOGGING = {
         },
     },
 }
+
+WECHAT_APP_SECRET=env('WECHAT_APP_SECRET', default='')
+WECHAT_APP_ID=env('WECHAT_APP_ID', default='')
