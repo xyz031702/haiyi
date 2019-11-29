@@ -55,7 +55,7 @@ def dialog_index_excel():
             if u:
                 data = {
                     "_id": uuid_question(u.question),
-                    "_index": "dasdas",
+                    "_index": get_index(),
                     "_type": "doc",  # '_type' field is discouraged since ES 6.x, just use the 'doc' as default
                     "_source": {
                         "question": u.question,
