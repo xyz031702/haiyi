@@ -77,7 +77,7 @@ def dialog_index_excel():
                 customers = __cell(sheet, "D", row_id)
             anw = "%s|%s" % (customers, __cell(sheet, "C", row_id))
             u.answers.append(anw)
-        if __cell(sheet, "C", row_id):
+        if __cell(sheet, "C", row_id) and not __cell(sheet, "A", row_id):
             if u:
                 customers = all
                 if __cell(sheet, "D", row_id):
