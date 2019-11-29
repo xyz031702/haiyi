@@ -2,7 +2,7 @@ from yaml import safe_load
 import json
 import uuid
 from haiyi.tools.es_handler import dialog_search
-from haiyi.tools.es_handler import bulk_index_1
+from haiyi.tools.es_handler import bulk_index_1, create_new_index
 import logging
 import re
 import openpyxl
@@ -12,12 +12,14 @@ logger = logging.getLogger(__name__)
 customers = {}
 
 
-def init():
-    bulk_index_1(index=get_index(), generator=dialog_index_excel)
-
-
 def get_index():
     return "es_dialog_script"
+
+
+def init():
+    result = create_new_index(get_index())
+    print(result)
+    bulk_index_1(index=get_index(), generator=dialog_index_excel)
 
 
 def uuid_question(question):
