@@ -43,7 +43,7 @@ def dialog_index_excel():
 
     all = "A,B,C,D,E,F"
 
-    wb = openpyxl.load_workbook("话术表格整理.xlsx", data_only=True)
+    wb = openpyxl.load_workbook("dialog.xlsx", data_only=True)
     sheet = wb["Sheet1"]
     row_id = 4
     u = None
