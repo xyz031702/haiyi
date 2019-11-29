@@ -40,8 +40,9 @@ def dialog_index_excel():
             return v
 
     class unit(object):
-        question = ""
-        answers = []
+        def __init__(self):
+            self.question = ""
+            self.answers = []
 
     all = "A,B,C,D,E,F"
 
