@@ -129,12 +129,31 @@ def search(message):
     return docs
 
 
-
 def dialog_search(keyword, index):
-    print('dialog_match|keyword=%s' % keyword)
+    hits= dialog_contains(keyword, index)
+    if not hits:
+        print('dialog_search|keyword=%s' % keyword)
+        es_request = []
+        # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
+        # req_body = {
+        #     'query': {'bool': {'must': {'match': {'question': keyword}}, 'filter': {'term': {'question': keyword}}}}}
+        req_body = {'query': {'match': {'question': keyword.strip()}}}
+        # es_request.append(req_head)
+        es_request.append(json.dumps(req_body) + ' \n')
+        res = ES_Conn().search(index=index, body=req_body, request_timeout=120)
+        docs = []
+        count = 0
+        return res.get('hits', {}).get('hits')
+    return hits
+
+
+def dialog_contains(keyword, index):
+    print('dialog_contains|keyword=%s' % keyword)
     es_request = []
     # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
-    req_body = {'query': {'match': {'question': keyword.strip()}}}
+    # req_body = {
+    #     'query': {'bool': {'must': {'match': {'question': keyword}}, 'filter': {'term': {'question': keyword}}}}}
+    req_body = {"query": {"match_phrase": {"question": keyword } }}
     # es_request.append(req_head)
     es_request.append(json.dumps(req_body) + ' \n')
     res = ES_Conn().search(index=index, body=req_body, request_timeout=120)

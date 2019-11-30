@@ -53,7 +53,10 @@ def dialog_index_excel():
 
     while True:
         if not __cell(sheet, "C", row_id):
-            break
+            if row_id>=146:
+                break
+            else:
+                continue
         if __cell(sheet, "A", row_id):
             if u:
                 data = {
@@ -149,9 +152,9 @@ def dialog_huashu(keyword, match_most=10):
     customer_type_set = set(list(customer_type))  # remove duplicate input,e.g.:  Aaa
     hits = dialog_search(keyword, get_index())
     answers = []
-    i = 1
-    for hit in hits:
-        src = hit['_source']
+    if hits:
+        src = hits[0]['_source']
+        i = 1
         for ans in src["answers"]:
             arr = ans.split("|")
             customers = arr[0].lower().split(",")  # lower the case, remove duplicate input,e.g.:  Aaa
@@ -160,4 +163,8 @@ def dialog_huashu(keyword, match_most=10):
             if customer_type_set.intersection(set(customers)):
                 answers.append("[%s]. %s" % (i, arr[1]))
                 i += 1
-    return "\n".join(answers)
+        return "\n".join(answers)
+        # only take the most matched question
+    else:
+        return "我暂时不清楚"
+
