@@ -76,10 +76,10 @@ def bulk_index(es, index, xls_file, generator, **kwargs):
     return success, fail
 
 
-def bulk_index_1(index, generator):
+def bulk_index_1(index, generator, **kwargs):
     es = ES_Conn()
     logger.info('bulk_index|index=%s', index)
-    success, fail = bulk(es, generator())
+    success, fail = bulk(es, generator(kwargs))
     return success, fail
 
 
