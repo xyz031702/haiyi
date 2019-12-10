@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from haiyi.products.parser import index_docs
-from haiyi.crm.cold_call import
+from haiyi.crm.cold_call.dialog import init
 import os
 
 
