@@ -53,9 +53,10 @@ def dialog_index_excel():
 
     while True:
         if not __cell(sheet, "C", row_id):
-            if row_id>=146:
+            if row_id >= 146:
                 break
             else:
+                row_id += 1
                 continue
         if __cell(sheet, "A", row_id):
             if u:
@@ -167,4 +168,3 @@ def dialog_huashu(keyword, match_most=10):
         # only take the most matched question
     else:
         return "我暂时不清楚"
-
