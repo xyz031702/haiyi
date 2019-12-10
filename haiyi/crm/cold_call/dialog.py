@@ -53,7 +53,7 @@ def dialog_index_excel():
 
     while True:
         if not __cell(sheet, "C", row_id):
-            if row_id >= 146:
+            if row_id >= 147:
                 break
             else:
                 row_id += 1
