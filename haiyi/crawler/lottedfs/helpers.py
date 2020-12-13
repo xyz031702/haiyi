@@ -6,6 +6,11 @@ import requests
 import time
 import json
 
+proxies = {
+    'http': 'http://182.253.115.90:8080',
+    'https': 'https://110.232.64.171:4777',
+}
+
 
 class LETIAN:
     def __init__(self):
@@ -15,15 +20,15 @@ class LETIAN:
             'Accept-Encoding': 'gzip, deflate',
             'Host': 'chn.lottedfs.com',
         }
-        # 设置白名单
-        benji_ip = requests.get('http://httpbin.org/ip').json()
-        print(benji_ip)
-        benji_ip = benji_ip["origin"]
-        baimingdan = 'http://web.http.cnapi.cc/index/index/save_white?neek=60945&appkey=fbf571c3235726b707f88aac332f210d&white={}'.format(
-            benji_ip)
-        back = requests.get(baimingdan).text
+        # # 设置白名单
+        # benji_ip = requests.get('http://httpbin.org/ip').json()
+        # print(benji_ip)
+        # benji_ip = benji_ip["origin"]
+        # baimingdan = 'http://web.http.cnapi.cc/index/index/save_white?neek=60945&appkey=fbf571c3235726b707f88aac332f210d&white={}'.format(
+        #     benji_ip)
+        # back = requests.get(baimingdan).text
         # 设置白名单结束
-        print(back)
+        #print(back)
         self.session = requests.session()
         self.session.verify = False
         self.ip = self.get_ip()
@@ -33,19 +38,19 @@ class LETIAN:
 
     def get_ip(self):
         # admin
-        ip_prot = requests.get(
-            'http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=1&time=1&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=').text
-        ip_prot = str(ip_prot).replace('\r', '').replace('\t', '').replace('\n', '')
-        print(ip_prot)
-        ip_proxys = {
-            'http': 'http:{}'.format(ip_prot),
-            'https': 'https:{}'.format(ip_prot)
-        }
-        return ip_proxys
+        # ip_prot = requests.get(
+        #     'http://webapi.http.zhimacangku.com/getip?num=1&type=1&pro=&city=0&yys=0&port=1&time=1&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=').text
+        # ip_prot = str(ip_prot).replace('\r', '').replace('\t', '').replace('\n', '')
+        # print(ip_prot)
+        # ip_proxys = {
+        #     'http': 'http:{}'.format(ip_prot),
+        #     'https': 'https:{}'.format(ip_prot)
+        # }
+        return proxies
 
     def get_key(self, name):
         s = self.session
-        url = 'http://chn.lottedfs.com/kr/search?comSearchWord={}&comCollection=GOODS&comTcatCD=&comMcatCD=&comScatCD=&comPriceMin=&comPriceMax=&comErpPrdGenVal_YN=&comHsaleIcon_YN=&comSaleIcon_YN=&comCpnIcon_YN=&comSvmnIcon_YN=&comGiftIcon_YN=&comMblSpprcIcon_YN=&comSort=RANK%2FDESC&comListCount=20'.format(
+        url = 'http://chn.lottedfs.cn/kr/search?comSearchWord={}&comCollection=GOODS&comTcatCD=&comMcatCD=&comScatCD=&comPriceMin=&comPriceMax=&comErpPrdGenVal_YN=&comHsaleIcon_YN=&comSaleIcon_YN=&comCpnIcon_YN=&comSvmnIcon_YN=&comGiftIcon_YN=&comMblSpprcIcon_YN=&comSort=RANK%2FDESC&comListCount=20'.format(
             name)
         r = s.get(url, proxies=self.ip)
         etr = etree.HTML(r.text)
@@ -72,12 +77,12 @@ class LETIAN:
     def get_page(self, prdNo, prdOptNo):
         s = self.session
         if prdNo and prdNo:
-            url = 'http://chn.lottedfs.com/kr/product/productDetail?prdNo={}&prdOptNo={}'.format(prdNo, prdOptNo)
-            url2 = 'http://chn.lottedfs.com/kr/product/productDetailBtmInfoAjax?prdNo={}&prdOptNo={}&previewYn='.format(
+            url = 'http://chn.lottedfs.cn/kr/product/productDetail?prdNo={}&prdOptNo={}'.format(prdNo, prdOptNo)
+            url2 = 'http://chn.lottedfs.cn/kr/product/productDetailBtmInfoAjax?prdNo={}&prdOptNo={}&previewYn='.format(
                 prdNo, prdOptNo)
         elif prdNo and prdNo == '':
-            url = 'http://chn.lottedfs.com/kr/product/productDetail?prdNo={}'.format(prdNo)
-            url2 = 'http://chn.lottedfs.com/kr/product/productDetailBtmInfoAjax?prdNo={}&previewYn='.format(prdNo)
+            url = 'http://chn.lottedfs.cn/kr/product/productDetail?prdNo={}'.format(prdNo)
+            url2 = 'http://chn.lottedfs.cn/kr/product/productDetailBtmInfoAjax?prdNo={}&previewYn='.format(prdNo)
         else:
             return {}
         print(url)
@@ -120,8 +125,10 @@ class LETIAN:
 
         return di
 
+
 def search_all():
     pass
+
 
 if __name__ == '__main__':
     l = LETIAN()
