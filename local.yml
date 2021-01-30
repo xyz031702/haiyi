@@ -6,6 +6,7 @@ version: '3'
 
 services:
   django: &django
+    container_name: django_haiyi
     depends_on:
       - postgres
     build:
@@ -14,13 +15,15 @@ services:
     volumes:
       - .:/app
     env_file: .env
-    command: /gunicorn.sh
+    command: ["sleep", "1d"]
+    #command: /gunicorn.sh
     ports:
     - "8000:8000"
     privileged: true
     restart: always
 
   postgres:
+    container_name: postgres_haiyi
     build:
       context: .
       dockerfile: ./compose/local/postgres/Dockerfile
