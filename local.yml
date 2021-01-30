@@ -6,7 +6,6 @@ version: '3'
 
 services:
   django: &django
-    container_name: django_haiyi
     depends_on:
       - postgres
     build:
@@ -22,7 +21,6 @@ services:
     restart: always
 
   postgres:
-    container_name: postgres_haiyi
     build:
       context: .
       dockerfile: ./compose/local/postgres/Dockerfile
