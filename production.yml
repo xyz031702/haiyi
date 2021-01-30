@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  django: &django
+    container_name: django_haiyi
+    hostname: django_haiyi
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    volumes:
+      - .:/app
+    env_file: .env
+    #command: ["sleep","1d"]
+    command: /gunicorn.sh
+    ports:
+    - "8000:8000"
+    privileged: true
+    restart: always
+
+  nginx-proxy:
+    image: neilpang/nginx-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+    volumes:
+      - ./compose/config/nginx/conf.d:/etc/nginx/conf.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./static/:/static/
+      - ./home:/var/www/html
+    privileged: true
+    #command: /ubuntu-tools.sh
+#    network_mode: "host"
+    #  - nginx_network
+
+
+#networks:  # <-- and here
+#  nginx_network:
+#    driver: bridge

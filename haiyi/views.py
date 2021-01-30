@@ -5,6 +5,7 @@ import json
 import logging
 import hashlib
 from haiyi.products.wechat import autoreply
+from haiyi.constants import CHANNELS
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +18,35 @@ def current_datetime(request):
 
 
 @csrf_exempt
+def chat_huashu(request):
+    logger.info('received request from wechat')
+    if request.method == 'GET':
+        logger.info('from wechat=%s', request.GET)
+        signature = request.GET.get('signature')
+        timestamp = request.GET.get('timestamp')
+        nonce = request.GET.get('nonce')
+        echostr = request.GET.get('echostr')
+        token = 'l6E6B5Qo1x6HniJiioO0NNoDC51dVKvQ'
+        my_list = [token, timestamp, nonce]
+        my_list.sort()
+        hashcode = ''.join(my_list)
+        hashcode = hashlib.sha1(hashcode.encode('utf-8')).hexdigest()
+        if hashcode == signature:
+            logger.info("hashcode matched=%s", hashcode)
+            return HttpResponse(echostr)
+        else:
+            logger.info("hashcode not matched, hash=%s, signature=%s", hashcode, signature)
+            return HttpResponse("no match")
+    else:
+        othercontent = autoreply(request.body, CHANNELS.HUASHU)
+        logger.info('reply=%s, length=%s', othercontent, len(othercontent.encode("utf-8")))
+        return HttpResponse(othercontent)
+
+
+@csrf_exempt
 def chat_receiver(request):
     logger.info('received request from wechat')
-    if request.method=='GET':
+    if request.method == 'GET':
         logger.info('from wechat=%s', request.GET)
         signature = request.GET.get('signature')
         timestamp = request.GET.get('timestamp')
@@ -37,11 +64,9 @@ def chat_receiver(request):
             logger.info("hashcode not matched, hash=%s, signature=%s", hashcode, signature)
             return HttpResponse("no match")
     else:
-        othercontent = autoreply(request.body)
-        logger.info('reply=%s', othercontent)
+        othercontent = autoreply(request.body, CHANNELS.JIAGE)
+        logger.info('reply=%s, length=%s', othercontent, len(othercontent.encode("utf-8")))
         return HttpResponse(othercontent)
-
-
 
     # html = "<html><body>chat: %s.</body></html>" % request.POST
     # return HttpResponse(html)

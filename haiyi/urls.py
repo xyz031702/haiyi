@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from haiyi.views import current_datetime,chat_receiver
+from haiyi.views import current_datetime,chat_receiver, chat_huashu
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', chat_receiver),
+    path('huashu/', chat_huashu),
     path('test/', current_datetime),
 ]

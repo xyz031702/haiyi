@@ -4,6 +4,7 @@ from elasticsearch.helpers import bulk
 import logging
 import json
 from xml.sax.saxutils import escape
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +14,10 @@ class ES_Conn(object):
 
     def __init__(self):
         if not ES_Conn.__instance:
-            ES_Conn.__instance = self.__conn(hosts=['host.docker.internal', 'localhost', 'elasticsearch_haiyi'],
-                                             port=9200,
-                                             es_payload_limit=100)
+            ES_Conn.__instance = self.__conn(
+                hosts=[settings.ES_HOST],
+                port=settings.ES_PORT,
+                es_payload_limit=100)
         self.__dict__['_ES_conn__instance'] = ES_Conn.__instance
 
     def __conn(self, hosts, port, es_payload_limit, username=None, password=None, cert=None, **kwargs):
@@ -68,9 +70,16 @@ def bulk_optimized(func):
 
 
 @bulk_optimized
-def bulk_index(index, xls_file, generator, **kwargs):
+def bulk_index(es, index, xls_file, generator, **kwargs):
     logger.info('bulk_index|index=%s', index)
-    success, fail = bulk(generator(index, xls_file, **kwargs))
+    success, fail = bulk(es, generator(index, xls_file, **kwargs))
+    return success, fail
+
+
+def bulk_index_1(index, generator):
+    es = ES_Conn()
+    logger.info('bulk_index|index=%s', index)
+    success, fail = bulk(es, generator())
     return success, fail
 
 
@@ -89,6 +98,7 @@ def get_doc_count(index):
 
 
 def search(message):
+    WECHAT_LIMIT = 2000
     print('keyword=%s' % message)
     es_request = []
     # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
@@ -102,18 +112,51 @@ def search(message):
         src = hit['_source']
         pname = escape(src['real_name'].strip())
         quality = int(src['quantity']) if src['quantity'] else 0
-        str = f"<a href='www.baidu.com'>{pname}</a>\n" \
-              f"库存数量: {quality}\n" \
-              f"实际成本: {src['real_cost']}元\n" \
-              f"市场成本: {src['market_cost']}元\n" \
-              f"3w售价: {src['price_3w']}元\n" \
-              f"1w售价：{src['price_1w']}元\n" \
-              f"3k售价：{src['price_3k']}元\n" \
-              f"零售价格：{src['price_retail']}元\n" \
-              f"热卖程度：{src['hot']}\n" \
-              f"采购难度：{src['difficulty']}"
+        content = f"<a href='www.baidu.com'>{pname}</a>\n" \
+                  f"库存数量: {quality}\n" \
+                  f"实际成本: {src['real_cost']}元\n" \
+                  f"市场成本: {src['market_cost']}元\n" \
+                  f"3w售价: {src['price_3w']}元\n" \
+                  f"1w售价：{src['price_1w']}元\n" \
+                  f"3k售价：{src['price_3k']}元\n" \
+                  f"零售价格：{src['price_retail']}元\n" \
+                  f"热卖程度：{src['hot']}\n" \
+                  f"采购难度：{src['difficulty']}"
         count += 1
-        if count >= 9:
+        if count >= 20:
             break
-        docs.append(str)
+        docs.append(content)
     return docs
+
+
+def dialog_search(keyword, index):
+    hits= dialog_contains(keyword, index)
+    if not hits:
+        print('dialog_search|keyword=%s' % keyword)
+        es_request = []
+        # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
+        # req_body = {
+        #     'query': {'bool': {'must': {'match': {'question': keyword}}, 'filter': {'term': {'question': keyword}}}}}
+        req_body = {'query': {'match': {'question': keyword.strip()}}}
+        # es_request.append(req_head)
+        es_request.append(json.dumps(req_body) + ' \n')
+        res = ES_Conn().search(index=index, body=req_body, request_timeout=120)
+        docs = []
+        count = 0
+        return res.get('hits', {}).get('hits')
+    return hits
+
+
+def dialog_contains(keyword, index):
+    print('dialog_contains|keyword=%s' % keyword)
+    es_request = []
+    # req_head = json.dumps({'index': 'haiyi_es'}) + ' \n'
+    # req_body = {
+    #     'query': {'bool': {'must': {'match': {'question': keyword}}, 'filter': {'term': {'question': keyword}}}}}
+    req_body = {"query": {"match_phrase": {"question": keyword } }}
+    # es_request.append(req_head)
+    es_request.append(json.dumps(req_body) + ' \n')
+    res = ES_Conn().search(index=index, body=req_body, request_timeout=120)
+    docs = []
+    count = 0
+    return res.get('hits', {}).get('hits')

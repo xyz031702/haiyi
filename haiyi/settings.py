@@ -26,7 +26,7 @@ SECRET_KEY = 'zza17$o2%7z@yiok#+%dm1e4qc70@nb*jf_h3@ldffpurfe^2a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '3.0.175.105']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '3.0.175.105', 'django_haiyi']
 
 # Application definition
 
@@ -80,10 +80,13 @@ DATABASES = {
         'NAME': env('POSTGRES_DB_NAME', default='haiyi'),
         'USER': env('POSTGRES_USER', default='haiyi'),
         'PASSWORD': env('POSTGRES_PASSWORD', default=''),
-        'HOST': 'haiyi_postgres_1',
+        'HOST': env("POSTGRES_HOSTNAME", default='haiyi_postgres_1'),
         'PORT': env('POSTGRES_PORT', default=5432),
     }
 }
+
+ES_HOST = env("ES_HOST", default="elasticsearch_haiyi")
+ES_PORT = env("ES_PORT", default=9200)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -146,3 +149,6 @@ LOGGING = {
         },
     },
 }
+
+WECHAT_APP_SECRET=env('WECHAT_APP_SECRET', default='')
+WECHAT_APP_ID=env('WECHAT_APP_ID', default='')
