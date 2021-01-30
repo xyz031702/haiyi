@@ -2,13 +2,22 @@ version: '3'
 
 
 services:
-  django:
+  jenkins:
     image: jenkinsci/blueocean
     ports:
       - "8080:8080"
     container_name: jenkins-blue-c
     hostname: jenkins-blue-h
     restart: always
+    environment:
+      TZ: Asia/Singapore
+    ports:
+      - 8080:8080
+      - 50000:50000
+    tty: true
+    volumes:
+      - $HOME/jenkins:/var/jenkins_home
+      - $HOME/jenkins/sock:/var/run/docker.sock
 
-  test-django:
+  test-jenkins:
     image: alpine:latest
