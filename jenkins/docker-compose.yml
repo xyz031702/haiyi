@@ -1,0 +1,14 @@
+version: '3'
+
+
+services:
+  django:
+    image: jenkinsci/blueocean
+    ports:
+      - "8080:8080"
+    container_name: jenkins-blue-c
+    hostname: jenkins-blue-h
+    restart: always
+
+  test-django:
+    image: alpine:latest
