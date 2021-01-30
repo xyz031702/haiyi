@@ -7,7 +7,6 @@ version: '3'
 services:
   django: &django
     container_name: django_haiyi
-    hostname: django_haiyi
     depends_on:
       - postgres
     build:
@@ -16,7 +15,6 @@ services:
     volumes:
       - .:/app
     env_file: .env
-    #command: ["sleep","1d"]
     command: /gunicorn.sh
     ports:
     - "8000:8000"
@@ -24,7 +22,7 @@ services:
     restart: always
 
   postgres:
-    hostname: 'postgres_haiyi'
+    container_name: postgres_haiyi
     build:
       context: .
       dockerfile: ./compose/local/postgres/Dockerfile
@@ -50,11 +48,3 @@ services:
       - ./static/:/static/
       - ./home:/var/www/html
     privileged: true
-    #command: /ubuntu-tools.sh
-#    network_mode: "host"
-    #  - nginx_network
-
-
-#networks:  # <-- and here
-#  nginx_network:
-#    driver: bridge
