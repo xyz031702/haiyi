@@ -28,12 +28,22 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./static/:/static/
       - ./home:/var/www/html
+      - ./nginx.tmpl:/app/nginx.tmpl
     privileged: true
+    env_file:
+      - .env
     #command: /ubuntu-tools.sh
 #    network_mode: "host"
     #  - nginx_network
 
-
+#env_file:
+#      - ${SCA_HOME}/backend/.env
+#    volumes:
+#      - ${SCA_HOME}/backend/staticfiles:/staticfiles/static
+#      - ${SCA_HOME}/backend/nginx/conf.d:/etc/nginx/conf.d
+#      - ${SCA_HOME}/backend/nginx.tmpl:/app/nginx.tmpl
+#      - ${SCA_HOME}/frontend/dist:/frontend
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
 #networks:  # <-- and here
 #  nginx_network:
 #    driver: bridge

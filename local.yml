@@ -6,6 +6,7 @@ version: '3'
 
 services:
   django: &django
+    container_name: django_haiyi
     depends_on:
       - postgres
     build:
@@ -15,12 +16,11 @@ services:
       - .:/app
     env_file: .env
     command: /gunicorn.sh
-    ports:
-    - "8000:8000"
-    privileged: true
+    #command: ["sleep", "1d"]
     restart: always
 
   postgres:
+    container_name: postgres_haiyi
     build:
       context: .
       dockerfile: ./compose/local/postgres/Dockerfile
@@ -37,7 +37,6 @@ services:
     image: neilpang/nginx-proxy
     ports:
       - "80:80"
-      - "8888:8888"
     depends_on:
       - django
     volumes:
@@ -45,4 +44,6 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./static/:/static/
       - ./home:/var/www/html
-    privileged: true
+      - ./nginx.tmpl:/app/nginx.tmpl
+    env_file:
+      - .env
