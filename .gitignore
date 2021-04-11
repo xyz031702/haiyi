@@ -6,3 +6,4 @@ upload
 static
 scantistdb_backup_local
 scantistdb_data_local
+compose/config/nginx/conf.d/default.conf

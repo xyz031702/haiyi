@@ -25,6 +25,15 @@ class ProductsFile(models.Model):
         return '%s' % self.file.name
 
 
+class HaiyiProduct(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField('商品名称', null=True, blank=False)
+    uploader = models.IntegerField('管理员', null=False, default='管理员')
+
+    def __str__(self):
+        return '%s(%s)' % (self.name, self.id)
+
+
 class ColdDialogFile(models.Model):
     id = models.AutoField(primary_key=True)
     file = models.FileField('话术文件', upload_to=settings.UPLOAD_FOLDER)
@@ -44,8 +53,14 @@ class ColdDialogFile(models.Model):
     def __str__(self):
         return '%s' % self.file.name
 
+
 class AInfo(models.Model):
     id = models.AutoField(primary_key=True)
+    pid = models.ForeignKey(
+        HaiyiProduct,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     amount = models.IntegerField('库存数量', default=0)
     actual_cost = models.FloatField('实际成本', null=True)
     market_cost = models.FloatField('市场成本', null=True)
@@ -58,6 +73,11 @@ class AInfo(models.Model):
 
 class BInfo(models.Model):
     id = models.AutoField(primary_key=True)
+    pid = models.ForeignKey(
+        HaiyiProduct,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     market_cost_price = models.FloatField('市场成本', null=True)
     cust_clear_free = models.FloatField('清关费用', null=True)
     vip_price = models.TextField('活动特价', null=True)
@@ -66,20 +86,6 @@ class BInfo(models.Model):
     dutyfree_storeprice = models.FloatField('免税店价格', null=True)
     hot_sell_product = models.TextField('热卖款', null=True)
     findpro_help = models.TextField('帮助找货', null=True)
-
-
-class HaiyiProduct(models.Model):
-    id = models.AutoField(primary_key=True)
-    a_info = models.ForeignKey(
-        AInfo,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    b_info = models.ForeignKey(
-        BInfo,
-        null=True,
-        on_delete=models.CASCADE,
-    )
 
 
 class HaiyiUser(models.Model):
@@ -101,9 +107,12 @@ class HaiyiUser(models.Model):
 
 class ThirdPartyProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    source = models.TextField('商品来源', null=False, blank=False)
+    source = models.TextField('商品来源', null=True, blank=False)
     category = models.TextField('商品类型', null=False, blank=False)
     name = models.TextField('商品名称', null=False, blank=False)
     price = models.TextField('商品价格', null=False, blank=False)
     brief = models.TextField('商品简介', null=False, blank=False)
     detail = models.TextField('商品详情', null=False, blank=False)
+
+    def __str__(self):
+        return '%s(%s)' % (self.name, self.id)

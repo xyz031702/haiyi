@@ -1,5 +1,8 @@
 ## 海蚁发布计划
 
+###[v1.0.0.alpha.2]
+- 增加销售培新对话机器人(cold dialog)
+
 ###[v1.0.0.alpha.1]
 - 静态网页站点
   - 添加文本信息到 home/context.txt
