@@ -84,7 +84,7 @@ class TextMsg(Msg):
 
 
 def handle_msg(channel, to_user, from_user, message):
-    if str.startswith(message.lower(), 'dy '):
+    if str.startswith(message.lower(), 'dy0000'):
         wechat_id = message.split(" ")[1]
         r = echo_openid(to_user, from_user, wechat_id)
         logger.info(r)

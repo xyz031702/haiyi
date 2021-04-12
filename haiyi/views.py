@@ -53,7 +53,7 @@ def chat_receiver(request):
         timestamp = request.GET.get('timestamp')
         nonce = request.GET.get('nonce')
         echostr = request.GET.get('echostr')
-        token = settings.WECHAT_TOKEN
+        token=settings.WECHAT_TOKEN
         my_list = [token, timestamp, nonce]
         my_list.sort()
         hashcode = ''.join(my_list)
