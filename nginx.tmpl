@@ -381,7 +381,6 @@ server {
 
 {{ end }}
 {{ end }}
-{{ if eq (or $.Env.NGINX_ON_PREM "False") "True"  }}
 server{
         server_name 127.0.0.1;
         client_max_body_size 0; # unlimited by escaping the check
@@ -400,4 +399,3 @@ server{
                 alias /static/;
         }
 }
-{{ end }}

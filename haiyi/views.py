@@ -6,6 +6,7 @@ import logging
 import hashlib
 from haiyi.products.wechat import autoreply
 from haiyi.constants import CHANNELS
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ def chat_huashu(request):
         timestamp = request.GET.get('timestamp')
         nonce = request.GET.get('nonce')
         echostr = request.GET.get('echostr')
-        token = 'l6E6B5Qo1x6HniJiioO0NNoDC51dVKvQ'
+        token=settings.WECHAT_TOKEN
         my_list = [token, timestamp, nonce]
         my_list.sort()
         hashcode = ''.join(my_list)
@@ -52,7 +53,7 @@ def chat_receiver(request):
         timestamp = request.GET.get('timestamp')
         nonce = request.GET.get('nonce')
         echostr = request.GET.get('echostr')
-        token = '681f2b6630982621edc25b1674760a7d'
+        token = settings.WECHAT_TOKEN
         my_list = [token, timestamp, nonce]
         my_list.sort()
         hashcode = ''.join(my_list)

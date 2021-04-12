@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'zza17$o2%7z@yiok#+%dm1e4qc70@nb*jf_h3@ldffpurfe^2a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("ES_PORT", default=False)
+DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '3.0.175.105', 'django_haiyi', '13.212.110.87']
 
@@ -152,3 +152,4 @@ LOGGING = {
 
 WECHAT_APP_SECRET=env('WECHAT_APP_SECRET', default='')
 WECHAT_APP_ID=env('WECHAT_APP_ID', default='')
+WECHAT_TOKEN=env('WECHAT_TOKEN', default='l6E6B5Qo1x6HniJiioO0NNoDC51dVKvQ')
