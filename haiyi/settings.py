@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'zza17$o2%7z@yiok#+%dm1e4qc70@nb*jf_h3@ldffpurfe^2a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("ES_PORT", default=False)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '3.0.175.105', 'django_haiyi', '13.212.110.87']
 
@@ -86,7 +86,7 @@ DATABASES = {
 }
 
 ES_HOST = env("ES_HOST", default="elasticsearch_haiyi")
-ES_PORT = env("ES_PORT", default=9200)
+ES_PORT = env.int("ES_PORT", default=9200)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
