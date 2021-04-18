@@ -17,6 +17,3 @@ admin.site.index_title = "海蚁"
 admin.site.register(ProductsFile)
 admin.site.register(HaiyiUser)
 admin.site.register(HaiyiProduct)
-admin.site.register(ThirdPartyProduct)
-admin.site.register(AInfo)
-admin.site.register(BInfo)
