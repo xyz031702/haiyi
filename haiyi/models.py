@@ -25,15 +25,6 @@ class ProductsFile(models.Model):
         return '%s' % self.file.name
 
 
-class HaiyiProduct(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.TextField('商品名称', null=True, blank=False)
-    uploader = models.IntegerField('管理员', null=False, default='管理员')
-
-    def __str__(self):
-        return '%s(%s)' % (self.name, self.id)
-
-
 class ColdDialogFile(models.Model):
     id = models.AutoField(primary_key=True)
     file = models.FileField('话术文件', upload_to=settings.UPLOAD_FOLDER)
