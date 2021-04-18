@@ -97,6 +97,28 @@ def get_doc_count(index):
     return ES_Conn().count(index).get('count', 0)
 
 
+def parse_result(src):
+    content=""
+    if settings.PRODUCT_SCHEMA_TYPE=='internal':
+        pname = escape(src['real_name'].strip())
+        quality = int(src['quantity']) if src['quantity'] else 0
+        content = f"<a href='www.baidu.com'>{pname}</a>\n" \
+                  f"库存数量: {quality}\n" \
+                  f"实际成本: {src['real_cost']}元\n" \
+                  f"市场成本: {src['market_cost']}元\n" \
+                  f"3w售价: {src['price_3w']}元\n" \
+                  f"1w售价：{src['price_1w']}元\n" \
+                  f"3k售价：{src['price_3k']}元\n" \
+                  f"零售价格：{src['price_retail']}元\n" \
+                  f"热卖程度：{src['hot']}\n" \
+                  f"采购难度：{src['difficulty']}"
+        return content
+    elif settings.PRODUCT_SCHEMA_TYPE=='external':
+        pname = escape(src['real_name'].strip())
+        content = f"<a href='www.baidu.com'>{pname}</a>\n" \
+                  f"离岸价格: {src['price']}元"
+    return content
+
 def search(message):
     WECHAT_LIMIT = 2000
     print('keyword=%s' % message)
@@ -110,18 +132,7 @@ def search(message):
     count = 0
     for hit in res.get('hits', {}).get('hits'):
         src = hit['_source']
-        pname = escape(src['real_name'].strip())
-        quality = int(src['quantity']) if src['quantity'] else 0
-        content = f"<a href='www.baidu.com'>{pname}</a>\n" \
-                  f"库存数量: {quality}\n" \
-                  f"实际成本: {src['real_cost']}元\n" \
-                  f"市场成本: {src['market_cost']}元\n" \
-                  f"3w售价: {src['price_3w']}元\n" \
-                  f"1w售价：{src['price_1w']}元\n" \
-                  f"3k售价：{src['price_3k']}元\n" \
-                  f"零售价格：{src['price_retail']}元\n" \
-                  f"热卖程度：{src['hot']}\n" \
-                  f"采购难度：{src['difficulty']}"
+        content = parse_result(src)
         count += 1
         if count >= 20:
             break

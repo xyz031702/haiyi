@@ -39,7 +39,7 @@ def get_line(worksheet, i, columns_num):
 
 
 def get_columns_schema(type):
-    return PRODUCT_SCHEMAS.get(type, default=[])
+    return PRODUCT_SCHEMAS.get(type, [])
 
 
 def read_xls(index, xls_file, type):
@@ -100,7 +100,7 @@ def index_docs(xls_file, type):
     index = 'haiyi_es'
     result = create_new_index(index)
     logger.info(f"index_docs|result={result}")
-    succ, fail = bulk_index(index=index, xls_file=xls_file, generator=read_xls)
+    succ, fail = bulk_index(index=index, xls_file=xls_file, type=type, generator=read_xls)
     logger.info(f'indexing|type={type}, succ={succ}, fail={fail}')
     return succ
 
