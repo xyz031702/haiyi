@@ -84,7 +84,7 @@ class TextMsg(Msg):
 
 
 def handle_msg(channel, to_user, from_user, message):
-    if str.startswith(message.lower(), 'dy0000'):
+    if str.startswith(message.lower(), 'dy '):
         wechat_id = message.split(" ")[1]
         r = echo_openid(to_user, from_user, wechat_id)
         logger.info(r)
@@ -136,31 +136,34 @@ def echo_openid(to_user, from_user, wechat_id):
         "appid": settings.WECHAT_APP_ID,
         "secret": settings.WECHAT_APP_SECRET,
     }
+
     r = requests.get(url=url, params=params)
-    if r.status_code == 200 and "access_token" in r.json():
-        access_token = r.json()["access_token"]
-        params = {
+    if r.status_code != 200 or "access_token" not in r.json():
+       logger.warning("echo_openid|fetch_user_info|error=%s", r.text)
+       return {"error": "failed to get access_token"}
+    access_token = r.json()["access_token"]
+
+    logger.info(f"Access token: {r.json()}")
+    url = "https://api.weixin.qq.com/cgi-bin/user/info"
+    params = {
             "access_token": access_token,
             "lang": "zh_C",
             "openid": from_user
-        }
-        url = "https://api.weixin.qq.com/cgi-bin/user/info"
-        r = requests.get(url=url, params=params)
-        if r.status_code == 200 and "nickname" in r.json():
-            nickname = r.json()["nickname"]
-            haiyi_user = HaiyiUser(
-                end_date=timezone.now() + timedelta(days=365),
-                active=False,
-                open_id=from_user,
-                name=nickname,
-                account_id=wechat_id,
-            )
-            haiyi_user.save()
-            logger.warning("echo_openid|save_user|user=%s, wechat_id=%s", haiyi_user.name, haiyi_user.account_id)
-        else:
-            logger.warning("echo_openid|fetch_user_info|error=%s", r.text)
-            return {"error": "注册失败"}
-    else:
-        logger.warning("echo_openid|get_access_token_info|error=%s", r.text)
+    }
+    r = requests.get(url=url, params=params)
+    if r.status_code != 200:
+        logger.warning("echo_openid|fetch_user_info|error=%s", r.text)
         return {"error": "注册失败"}
+    logger.info(f"User info: {r.json()}")
+    nickname = r.json()["nickname"]
+    haiyi_user = HaiyiUser(
+        end_date=timezone.now() + timedelta(days=365),
+        active=False,
+        open_id=from_user,
+        name=nickname,
+        account_id=wechat_id,
+    )
+    haiyi_user.save()
+    logger.warning("echo_openid|save_user|user=%s, wechat_id=%s", haiyi_user.name, haiyi_user.account_id)
     return {"result": "注册成功，请通知管理员开通"}
+

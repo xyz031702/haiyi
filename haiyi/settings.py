@@ -123,14 +123,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+UPLOAD_FOLDER = "upload/"
 # STATIC_FOLDER = 'static'
 #
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR,STATIC_FOLDER),
 # ]
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-UPLOAD_FOLDER = "upload/"
 
 LOGGING = {
     'version': 1,
@@ -150,6 +149,8 @@ LOGGING = {
     },
 }
 
+
+PRODUCT_SCHEMA_TYPE=env('PRODUCT_SCHEMA_TYPE', default='internal')
 WECHAT_APP_SECRET=env('WECHAT_APP_SECRET', default='')
 WECHAT_APP_ID=env('WECHAT_APP_ID', default='')
 WECHAT_TOKEN=env('WECHAT_TOKEN', default='681f2b6630982621edc25b1674760a7d')

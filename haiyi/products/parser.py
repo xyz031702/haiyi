@@ -1,5 +1,6 @@
 import xlrd
 from haiyi.tools.es_handler import bulk_index, create_new_index
+from haiyi.products.schemas import PRODUCT_SCHEMAS
 import json
 import jieba
 from django.conf import settings
@@ -37,7 +38,11 @@ def get_line(worksheet, i, columns_num):
     return line
 
 
-def read_xls(index, xls_file):
+def get_columns_schema(type):
+    return PRODUCT_SCHEMAS.get(type, default=[])
+
+
+def read_xls(index, xls_file, type):
     # xls_file = os.path.join(settings.BASE_DIR, settings.UPLOAD_FOLDER, 'products11.23.xls')
     logging.info('read_xls|index=%s, xls_file=%s', index, xls_file)
     workbook = xlrd.open_workbook(xls_file, on_demand=True)
@@ -50,19 +55,7 @@ def read_xls(index, xls_file):
         # yield temp_src
         while (cell):
             product_name = jieba.cut_for_search(worksheet.cell(i, 1).value)
-            columns = [
-                ('model_id', 'str'),
-                ('real_name', 'str'),
-                ('quantity', 'int'),
-                ('real_cost', 'float'),
-                ('market_cost', 'float'),
-                ('price_3w', 'float'),
-                ('price_1w', 'float'),
-                ('price_3k', 'float'),
-                ('price_retail', 'float'),
-                ('hot', 'str'),
-                ('difficulty', 'str')
-            ]
+            columns = get_columns_schema(type)
             j = 0
             src = {}
             column_ok = True
@@ -103,14 +96,13 @@ def read_xls(index, xls_file):
         wrong_rows.close()
 
 
-def index_docs(xls_file):
+def index_docs(xls_file, type):
     index = 'haiyi_es'
     result = create_new_index(index)
-    print(result)
+    logger.info(f"index_docs|result={result}")
     succ, fail = bulk_index(index=index, xls_file=xls_file, generator=read_xls)
-    logger.info('indexing|succ=%s, fail=%s', succ, fail)
+    logger.info(f'indexing|type={type}, succ={succ}, fail={fail}')
     return succ
 
     # index_docs()
     # search('美丽工匠')
-
