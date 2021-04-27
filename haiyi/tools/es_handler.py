@@ -116,7 +116,7 @@ def parse_result(src):
     elif settings.PRODUCT_SCHEMA_TYPE=='external':
         pname = escape(src['real_name'].strip())
         content = f"<a href='www.baidu.com'>{pname}</a>\n" \
-                  f"离岸价格: {src['price']}元"
+                  f"离岸参考价格: {src['price']}"
     return content
 
 def search(message):
