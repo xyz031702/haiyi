@@ -106,7 +106,7 @@ def search_item(to_user, from_user, message):
         filter(active=True). \
         filter(end_date__gte=timezone.now())
     if not members:
-        return '不是激活用户, 请联系海蚁管理员。'
+        return '不是激活用户, 请联系管理员。'
     products = search(message)
     logger.info("search_item|products=%s", len(products))
     content = ""
@@ -129,7 +129,7 @@ def echo_openid(to_user, from_user, wechat_id):
     members = HaiyiUser.objects.filter(open_id=from_user). \
         filter(end_date__gte=timezone.now())
     if members:
-        return {"result": "用户已注册, 确认开通或退订请联系海蚁管理员。"}
+        return {"result": "用户已注册, 确认开通或退订请联系管理员。"}
     url = "https://api.weixin.qq.com/cgi-bin/token"
     params = {
         "grant_type": "client_credential",
